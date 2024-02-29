@@ -21,7 +21,7 @@ using namespace tinyobj;
 
 static void PrintInfo (const ObjReader myObj) {
     const tinyobj::attrib_t attrib = myObj.GetAttrib();
-    const std::vector<tinyobj::shape_t> shapes = myObj.GetShapes();
+    const std::vector<tinyobj::shape_t> shapes = myObj.GetShapes(); // access the shapes (each shape is one mesh)
     const std::vector<tinyobj::material_t> materials = myObj.GetMaterials();
     std::cout << "# of vertices  : " << (attrib.vertices.size() / 3) << std::endl;
     std::cout << "# of normals   : " << (attrib.normals.size() / 3) << std::endl;
@@ -51,7 +51,50 @@ static void PrintInfo (const ObjReader myObj) {
         
         printf("There are %lu material indexes\n", it_shape->mesh.material_ids.size());
     }
-    
+
+// iterate over shapes (meshes)
+for (auto shp = shps.begin() ; shp != shps.end() ; shp++) {
+        Primitive *p = new Primitive;
+        Mesh *m = new Mesh;
+        p->g = m;
+        // assume all faces in the mesh have the same material
+        p->material_ndx = shp->mesh.material_ids[0];
+
+        // the primitive's geometry bounding box is computed on the fly
+        // initially set BB.min and BB.max to be the first vertex
+        const int V1st = shp->mesh.indices.begin()->vertex_index * 3;
+        m->bb.min.set(vtcs[V1st], vtcs[V1st+1], vtcs[V1st+2]);
+        m->bb.max.set(vtcs[V1st], vtcs[V1st+1], vtcs[V1st+2]);
+
+
+    std::set<rehash> vert_rehash;
+    for (auto v_it=shp->mesh.indices.begin(); v_it!=shp-> mesh.indices.end() ;) {
+        Face *f = new Face;
+        Point myVtcs[3];
+        // process 3 vertices
+        for (int v=0 ; v<3 ; v++) {
+            const int objNdx = v_it->vertex_index;
+            myVtcs[v].set(vtcs[objNdx*3], vtcs[objNdx*3+1], vtcs[objNdx*3+2]);
+            if (v==0) {
+                f->bb.min.set(myVtcs[0].X, myVtcs[0].Y, myVtcs[0].Z);
+                f->bb.max.set (myVtcs[0].X, myVtcs[0].Y, myVtcs[0].Z);
+            } else face->bb.update(myVtcs[v]);
+
+            // add vertex to mesh if new
+                rehash new_vert={objNdx, 0};
+                auto known_vert = vert_rehash.find(new_vert);
+                if (known_vert == vert_rehash.end()) { // new vertice, add it to the mesh
+                    new_vert.ourNdx = m->numVertices;
+                    vert_rehash.insert(new_vert);
+                    m->vertices.push_back(myVtcs[v]);   m->numVertices++;
+                    // register in the face
+                    f->vert_ndx[v] = new_vert.ourNdx;   m->bb.update(myVtcs[v]);
+                } else f->vert_ndx[v] = known_vert->ourNdx;
+                v_it++;  // next vértice within this face (there are 3)
+            //    end vertices
+
+        }
+
 }
 
 /*
@@ -61,9 +104,41 @@ static void PrintInfo (const ObjReader myObj) {
 
 bool Scene::Load (const std::string &fname) {
     ObjReader myObjReader;
+    int FaceID = 0;
+
+    ObjReader myObj;
 
     if (!myObjReader.ParseFromFile(fname)) {
         return false;
+    }
+    
+    const vector<material_t> materials = myObj.GetMaterials();
+    for (auto it = materials.begin(); it != materials.end() ; it+++) {
+        Phong *mat = new Phong;
+        // Ka
+        mat->Ka.R = it->ambient[0];
+        mat->Ka.B = it->ambient[1];
+        mat->Ka.G = it->ambient[2];
+
+        mat->Kd.R = it->ambient[0];
+        mat->Kd.B = it->ambient[1];
+        mat->Kd.G = it->ambient[2];
+
+        mat->Ns.R = it->ambient[0];
+        mat->Ns.B = it->ambient[1];
+        mat->Ns.G = it->ambient[2];
+
+        mat->Ks.R = it->ambient[0];
+        mat->Ks.B = it->ambient[1];
+        mat->Ks.G = it->ambient[2];
+
+        mat->Kt.R = it->ambient[0];
+        mat->Kt.B = it->ambient[1];
+        mat->Kt.G = it->ambient[2];
+        
+        BRDFs.push_back (mat);
+        numBRDFs++;
+        
     }
     
     //PrintInfo (myObjReader);
