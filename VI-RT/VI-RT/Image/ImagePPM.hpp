@@ -4,6 +4,10 @@
 //
 //  Created by Luis Paulo Santos on 09/03/2023.
 //
+// Inherits from Image, extending its functionality for PPM image specific operations.
+// Defines the PPM_pixel structure to represent a pixel in PPM format.
+// Includes the ToneMap function for converting and clamping pixel values.
+// Declares the Save function specific to PPM format.
 
 #ifndef ImagePPM_hpp
 #define ImagePPM_hpp

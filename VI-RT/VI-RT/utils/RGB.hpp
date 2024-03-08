@@ -4,6 +4,8 @@
 //
 //  Created by Luis Paulo Santos on 30/01/2023.
 //
+// Defines the RGB class, representing a color with red, green, and blue components.
+// Includes operators for addition, multiplication, and other common operations.
 
 #ifndef RGB_hpp
 #define RGB_hpp
