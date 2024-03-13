@@ -27,11 +27,11 @@ DEPENDENCIES \
 all:	build $(APP_DIR)/$(TARGET)
 
 $(OBJ_DIR)/%.o: %.cpp
-	@mkdir -p $(@D)
+	@mkdir -p $(@D) 2>/dev/null || true
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -MMD -o $@
 
 $(APP_DIR)/$(TARGET): $(OBJECTS)
-	@mkdir -p $(@D)
+	@mkdir -p $(@D) 2>/dev/null || true
 	$(CXX) $(CXXFLAGS) -o $(APP_DIR)/$(TARGET) $^ $(LDFLAGS)
 
 -include $(DEPENDENCIES)
@@ -39,11 +39,10 @@ $(APP_DIR)/$(TARGET): $(OBJECTS)
 .PHONY: all build clean 
 
 build:
-	@mkdir -p $(APP_DIR)
-	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(APP_DIR) 2>/dev/null || true
+	@mkdir -p $(OBJ_DIR) 2>/dev/null || true
 
 clean:
 	-@rm -rvf $(OBJ_DIR)/*
 	-@rm -rvf $(APP_DIR)/*
-
 

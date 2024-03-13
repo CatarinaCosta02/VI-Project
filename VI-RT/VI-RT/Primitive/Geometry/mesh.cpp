@@ -13,6 +13,8 @@
 // // https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
 // Moller Trumbore intersection algorithm
 
+#include <cfloat> // Add this include directive
+
 bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
 
 
@@ -22,7 +24,7 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
 bool Mesh::intersect (Ray r, Intersection *isect) {
     bool intersect = true, intersect_this_face;
     Intersection min_isect, curr_isect;
-    float min_depth=MAXFLOAT;
+    float min_depth = FLT_MAX;
     // intersect the ray with the mesh BB
     if (!bb.intersect(r)) return false;
     

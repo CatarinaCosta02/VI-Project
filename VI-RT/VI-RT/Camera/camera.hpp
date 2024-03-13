@@ -22,7 +22,7 @@ public:
     Camera(const Point& eye, const Point& at, const Vector& up, float fov, int width, int height)
         : Eye(eye), At(at), Up(up), fov(fov), W(width), H(height) {}
     virtual ~Camera() {}
-    virtual bool GenerateRay(const int x, const int y, Ray* r, const float* cam_jitter = NULL) { return false; }
+    virtual bool GenerateRay(const int x, const int y, Ray* r, const float* cam_jitter = nullptr) { return false; }
     virtual void getResolution(int* _W, int* _H) { *_W = W; *_H = H; }
 
 protected:

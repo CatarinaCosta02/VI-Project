@@ -21,6 +21,11 @@ typedef struct Face {
     int vert_normals_ndx[3];    // indices to veritices normals
     BB bb;      // face bounding box
                 // this is min={0.,0.,0.} , max={0.,0.,0.} due to the Point constructor
+    
+    // adicionei estes atributos à Face
+    Vector edge1;  
+    Vector edge2;
+    int FaceID;
 } Face;
 
 class Mesh: public Geometry {

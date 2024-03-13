@@ -28,7 +28,7 @@ public:
     Intersection() {}
     // from pbrt book, section 2.10, pag 116
     Intersection(const Point &p, const Vector &n, const Vector &wo, const float &depth)
-    : p(p), gn(n), sn(n), wo(wo), depth(depth), f(NULL) { }
+    : p(p), gn(n), sn(n), wo(wo), depth(depth), f(nullptr) { }
 } Intersection;
 
 #endif /* Intersection_hpp */

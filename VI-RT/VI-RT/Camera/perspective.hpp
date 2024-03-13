@@ -38,10 +38,13 @@ public:
     void computeCameraToWorld();
 
     // Method to generate a ray from the camera
-    bool GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter=NULL);
+    bool GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter = nullptr);
 
     // Method to get the resolution
-    void getResolution(int *_W, int *_H);
+    void getResolution(int *_W, int *_H) {
+        *_W = W;
+        *_H = H;
+    }
 };
 
 #endif /* perspective_hpp */

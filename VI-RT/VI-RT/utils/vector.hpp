@@ -34,7 +34,7 @@ public:
     }
     // note that methods declared within the class are inline by default
     inline float norm () {
-        return std::sqrtf(X*X+Y*Y+Z*Z);
+        return std::sqrt(X*X+Y*Y+Z*Z);
     }
     inline void normalize () {
         const float my_norm = norm();
@@ -77,7 +77,7 @@ public:
     // Generate an orthonormal coordinate system around this vector (must be normalized)
     // returns the 2 new axis orthogonal top the vector
     void CoordinateSystem(Vector *v2, Vector *v3) {
-        if (abs(X) > abs(Y))
+        if (std::abs(X) > std::abs(Y))
             *v2 = Vector(-Z, 0, X) / sqrtf(X * X + Z * Z);
         else
             *v2 = Vector(0, Z, -Y) / sqrtf(Y * Y + Z * Z);

@@ -11,6 +11,9 @@
 #include "AreaLight.hpp"
 #include <stdlib.h>
 #include <math.h>
+#include <cmath>
+
+#define M_PI 3.14159265358979323846
 
 //#include "DEB.h"
 
@@ -88,7 +91,7 @@ RGB DistributedShader::specularReflection (Intersection isect, Phong *f, int dep
     // direction R = 2 (N.V) N - V
     float cos = isect.gn.dot(isect.wo);
     Rdir = 2.f * cos * isect.gn - isect.wo;
-    
+
 
     if (f->Ns < 1000) { // glossy materials
         // actual direction distributed around Rdir according to the cosine lobe
