@@ -20,6 +20,7 @@
 #include "vector.hpp"
 #include "Ray.hpp" // Include the Ray header
 #include "camera.hpp" // Include the Camera header
+#include <iostream> // Include the iostream library for printing messages
 
 // Constructor
 Perspective::Perspective(const Point Eye, const Point At, const Vector Up, const int W, const int H, const float fovW, const float fovH)
@@ -36,6 +37,8 @@ void Perspective::computeCameraToWorld() {
     c2w[0][0] = 1.0f; c2w[0][1] = 0.0f; c2w[0][2] = 0.0f;
     c2w[1][0] = 0.0f; c2w[1][1] = 1.0f; c2w[1][2] = 0.0f;
     c2w[2][0] = 0.0f; c2w[2][1] = 0.0f; c2w[2][2] = 1.0f;
+    // Print a message to indicate that ToneMap is complete
+    std::cout << "Camara working." << std::endl;
 }
 
 // Method to generate a ray

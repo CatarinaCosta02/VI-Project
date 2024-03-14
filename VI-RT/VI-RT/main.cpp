@@ -51,7 +51,7 @@ int main(int argc, const char * argv[]) {
     img = new ImagePPM(W,H);
     
     // Camera parameters
-    const Point Eye ={0,0,0}, At={0,0,1};
+    const Point Eye ={280,275,-490}, At={280,265,0};
     const Vector Up={0,1,0};
     const float fovW = 60.f;
     const float fovH = fovW * (float)H/(float)W;  // in degrees
@@ -62,6 +62,7 @@ int main(int argc, const char * argv[]) {
     RGB background(0.05, 0.05, 0.55);
     shd = new AmbientShader(&scene, background);
     // declare the renderer
+    // int spp=64;
     int spp=1;     // samples per pixel
     StandardRenderer myRender (cam, &scene, img, shd, spp);
     // render
