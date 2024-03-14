@@ -51,9 +51,9 @@ int main(int argc, const char * argv[]) {
     img = new ImagePPM(W,H);
     
     // Camera parameters
-    const Point Eye ={280,275,-490}, At={280,265,0};
+    const Point Eye ={280,275,-330}, At={280,265,0};
     const Vector Up={0,1,0};
-    const float fovW = 60.f;
+    const float fovW = 90.f;
     const float fovH = fovW * (float)H/(float)W;  // in degrees
     const float fovWrad = fovW*3.14f/180.f, fovHrad = fovH*3.14f/180.f;    // to radians
     cam = new Perspective(Eye, At, Up, W, H, fovWrad, fovHrad);
