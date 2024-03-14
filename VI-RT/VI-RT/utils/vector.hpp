@@ -59,6 +59,11 @@ public:
     Vector Abs(void) {
         return Vector(std::abs(X), std::abs(Y), std::abs(Z));
     }
+
+    // Calculate the length (magnitude) of the vector
+    float length() const {
+        return std::sqrt(X*X + Y*Y + Z*Z);
+    }
     // from pbrt book (3rd ed.), sec 2.2.1, pag 66
     int MaxDimension(void) {
         return (X > Y) ? ((X > Z) ? 0 : 2) : ((Y > Z) ? 1 : 2);
@@ -117,6 +122,10 @@ public:
     }
     inline void set(float x, float y, float z) {
         X=x;Y=y;Z=z;
+    }
+    // Calculate the length (magnitude) of the vector
+    float length() const {
+        return std::sqrt(X*X + Y*Y + Z*Z);
     }
     // note that methods declared within the class are inline by default
     inline Vector vec2point (Point p2) {
