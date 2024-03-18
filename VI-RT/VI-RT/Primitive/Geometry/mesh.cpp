@@ -17,6 +17,30 @@
 
 bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
 
+    // n * (p - p0) = 0, onde n é a normal da face, p é um ponto na face e p0 é um ponto na face
+    // n = (v1 - v0) x (v2 - v0)
+    Point p0 = vertices[f.vert_ndx[0]];
+    Point p1 = vertices[f.vert_ndx[1]];
+    Point p2 = vertices[f.vert_ndx[2]];
+
+    Vector edge1 = p1 - p0;
+    Vector edge2 = p2 - p0;
+    Vector h = r.direction.cross(edge2);
+    float a = edge1.dot(h);
+
+    // verifica se o raio é paralelo ao triangulo
+    if (a > -0.00001f && a < 0.00001f)
+        return false;
+
+    float f = 1.0f / a;
+    Vector s = r.origin - p0;
+    float u = f * s.dot(h);
+
+    if (u < 0.0f || u > 1.0f)
+        return false;
+    
+    Vector q = s.cross(edge1);
+    
 
     return false;
 }

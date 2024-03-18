@@ -19,7 +19,8 @@
 
 using namespace tinyobj;
 
-static void PrintInfo (const ObjReader myObj) {
+static void PrintInfo(const ObjReader myObj)
+{
     const tinyobj::attrib_t attrib = myObj.GetAttrib();
     const std::vector<tinyobj::shape_t> shps = myObj.GetShapes();
     const std::vector<tinyobj::material_t> materials = myObj.GetMaterials();
@@ -30,28 +31,30 @@ static void PrintInfo (const ObjReader myObj) {
 
     std::cout << "# of shapes    : " << shps.size() << std::endl;
     std::cout << "# of materials : " << materials.size() << std::endl;
-    
+
     // Iterate shapes
     auto it_shape = shps.begin();
-    for ( ; it_shape != shps.end() ; it_shape++) {
+    for (; it_shape != shps.end(); it_shape++)
+    {
         // assume each face has 3 vertices
         std::cout << "Processing shape " << it_shape->name << std::endl;
         // iterate faces
         // assume each face has 3 vertices
         auto it_vertex = it_shape->mesh.indices.begin();
-        for ( ; it_vertex != it_shape->mesh.indices.end() ; ) {
+        for (; it_vertex != it_shape->mesh.indices.end();)
+        {
             // process 3 vertices
-            for (int v=0 ; v<3 ; v++) {
+            for (int v = 0; v < 3; v++)
+            {
                 std::cout << it_vertex->vertex_index;
                 it_vertex++;
             }
             std::cout << std::endl;
         }
         std::cout << std::endl;
-        
+
         printf("There are %lu material indexes\n", it_shape->mesh.material_ids.size());
     }
-    
 }
 
 /*
@@ -59,22 +62,22 @@ static void PrintInfo (const ObjReader myObj) {
  https://github.com/tinyobjloader/tinyobjloader
  */
 
-bool Scene::Load(const std::string &fname) {
+bool Scene::Load(const std::string &fname)
+{
     ObjReader myObjReader;
     int FaceID = 0;
 
     ObjReader myObj;
-    if (!myObj.ParseFromFile(fname)) {
+    if (!myObj.ParseFromFile(fname))
+    {
         return false;
     }
-
+    // get the materials
     const std::vector<tinyobj::material_t> materials = myObj.GetMaterials();
 
-    PrintInfo (myObjReader);
-
-    // convert loader's representation to my representation
-    
-    for (auto it = materials.begin(); it != materials.end(); it++) {
+    for (auto it = materials.begin(); it != materials.end(); it++)
+    {
+        // criação de um objeto Phong para cada material
         Phong *mat = new Phong;
 
         // Ka
@@ -86,7 +89,7 @@ bool Scene::Load(const std::string &fname) {
         mat->Kd.R = it->diffuse[0];
         mat->Kd.G = it->diffuse[1];
         mat->Kd.B = it->diffuse[2];
-        
+
         // Ns (specular exponent/shininess)
         mat->Ns = it->shininess;
 
@@ -100,17 +103,68 @@ bool Scene::Load(const std::string &fname) {
         mat->Kt.G = it->transmittance[1];
         mat->Kt.B = it->transmittance[2];
 
-    
+        // adicionar o material à lista de BRDFs, que é usada para modelar como a luz é refletida em superfícies
         BRDFs.push_back(mat);
-        numBRDFs++;    
+        numBRDFs++;
     }
 
+    PrintInfo(myObjReader);
 
+    // ter acesso aos vértices e à mesh
+
+    // get the vertices
+    // const tinyobj::attrib_t attrib = myObj.GetAttrib();
+    // const float *vtcs = attrib.vertices.data();
+    // const std::vector<tinyobj::shape_t> shapes = myObj.GetShapes();
+
+    // iterate over shapes
+    /*
+    for (size_t shapeIndex = 0; shapeIndex < shapes.size(); shapeIndex++)
+    {
+        // Loop over faces(polygon)
+        size_t index_offset = 0;
+        for (size_t faceIndex = 0; faceIndex < shapes[shapeIndex].mesh.num_face_vertices.size(); faceIndex++)
+        {
+            size_t fv = size_t(shapes[shapeIndex].mesh.num_face_vertices[faceIndex]);
+
+            // Loop over vertices in the face.
+            for (size_t vertexIndex = 0; vertexIndex < fv; vertexIndex++)
+            {
+                // access to vertex
+                tinyobj::index_t idx = shapes[shapeIndex].mesh.indices[index_offset + vertexIndex];
+                tinyobj::real_t vx = attributes.vertices[3 * size_t(idx.vertex_index) + 0];
+                tinyobj::real_t vy = attributes.vertices[3 * size_t(idx.vertex_index) + 1];
+                tinyobj::real_t vz = attributes.vertices[3 * size_t(idx.vertex_index) + 2];
+
+                // Check if `normal_index` is zero or positive. negative = no normal data
+                if (idx.normal_index >= 0)
+                {
+                    tinyobj::real_t nx = attributes.normals[3 * size_t(idx.normal_index) + 0];
+                    tinyobj::real_t ny = attributes.normals[3 * size_t(idx.normal_index) + 1];
+                    tinyobj::real_t nz = attributes.normals[3 * size_t(idx.normal_index) + 2];
+                }
+
+                // Check if `texcoord_index` is zero or positive. negative = no texcoord data
+                if (idx.texcoord_index >= 0)
+                {
+                    tinyobj::real_t tx = attributes.texcoords[2 * size_t(idx.texcoord_index) + 0];
+                    tinyobj::real_t ty = attributes.texcoords[2 * size_t(idx.texcoord_index) + 1];
+                }
+            }
+            index_offset += fv;
+
+            // per-face material
+            shapes[shapeIndex].mesh.material_ids[faceIndex];
+        }*/
+
+    // get the vertices
     const tinyobj::attrib_t attrib = myObj.GetAttrib();
     const float *vtcs = attrib.vertices.data();
 
+    // iterate over shapes
     const std::vector<tinyobj::shape_t> shps = myObj.GetShapes();
-    for (auto shp = shps.begin(); shp != shps.end(); shp++) {
+    for (auto shp = shps.begin(); shp != shps.end(); shp++)
+    {
         Primitive *p = new Primitive;
         Mesh *m = new Mesh;
         p->g = m;
@@ -124,11 +178,13 @@ bool Scene::Load(const std::string &fname) {
         m->bb.max.set(vtcs[V1st], vtcs[V1st + 1], vtcs[V1st + 2]);
 
         // estrutura rehash (não existia em nenhum lado do código)
-        struct rehash {
+        struct rehash
+        {
             int objNdx;
             int ourNdx;
 
-            bool operator<(const rehash& other) const {
+            bool operator<(const rehash &other) const
+            {
                 // Define your comparison logic here. For example:
                 return objNdx < other.objNdx;
             }
@@ -136,104 +192,84 @@ bool Scene::Load(const std::string &fname) {
 
         // add faces and vertices
         std::set<rehash> vert_rehash;
-        for (auto v_it = shp->mesh.indices.begin(); v_it != shp->mesh.indices.end();) {
+        for (auto v_it = shp->mesh.indices.begin(); v_it != shp->mesh.indices.end();)
+        {
             Face *f = new Face;
             Point myVtcs[3];
             // process 3 vertices
-            for (int v = 0; v < 3; v++) {
+            for (int v = 0; v < 3; v++)
+            {
                 const int objNdx = v_it->vertex_index;
                 myVtcs[v].set(vtcs[objNdx * 3], vtcs[objNdx * 3 + 1], vtcs[objNdx * 3 + 2]);
-                if (v == 0) {
+                if (v == 0)
+                {
                     f->bb.min.set(myVtcs[0].X, myVtcs[0].Y, myVtcs[0].Z);
                     f->bb.max.set(myVtcs[0].X, myVtcs[0].Y, myVtcs[0].Z);
                 }
-                else {
+                else
+                {
                     f->bb.update(myVtcs[v]);
                 }
 
                 // add vertex to mesh if new
-                rehash new_vert = { objNdx, 0 };
+                rehash new_vert = {objNdx, 0};
                 auto known_vert = vert_rehash.find(new_vert);
-                if (known_vert == vert_rehash.end()) { // new vertice, add it to the mesh
+                if (known_vert == vert_rehash.end())
+                { // new vertice, add it to the mesh
                     new_vert.ourNdx = m->numVertices;
                     vert_rehash.insert(new_vert);
-                    m->vertices.push_back(myVtcs[v]); m->numVertices++;
+                    m->vertices.push_back(myVtcs[v]);
+                    m->numVertices++;
                     // register in the face
-                    f->vert_ndx[v] = new_vert.ourNdx; m->bb.update(myVtcs[v]);
+                    f->vert_ndx[v] = new_vert.ourNdx;
+                    m->bb.update(myVtcs[v]);
                 }
                 else
                     f->vert_ndx[v] = known_vert->ourNdx;
-                v_it++;  // next vértice within this face (there are 3)
-            }    //    end vertices
+                v_it++; // next vértice within this face (there are 3)
+            }           //    end vertices
 
             // add face to mesh: compute the geometric normal
             Vector v1 = myVtcs[0].vec2point(myVtcs[1]);
             Vector v2 = myVtcs[0].vec2point(myVtcs[2]);
-            f->edge1 = v1;  f->edge2 = v2;
+            f->edge1 = v1;
+            f->edge2 = v2;
             Vector normal = v1.cross(v2);
             normal.normalize();
             f->geoNormal.set(normal);
             f->FaceID = FaceID++;
             // add face to mesh
-            m->faces.push_back(*f); m->numFaces++;
-        }    // end iterate vértices in the mesh (shape)
+            m->faces.push_back(*f);
+            m->numFaces++;
+        } // end iterate vértices in the mesh (shape)
         // add primitive to scene
-        prims.push_back(p); numPrimitives++;
-    }  // end iterate over shapes
-
-
-    // Loop over shapes
-    for (size_t s = 0; s < shps.size(); s++) {
-        // Loop over faces(polygon)
-        size_t index_offset = 0;
-        for (size_t f = 0; f < shps[s].mesh.num_face_vertices.size(); f++) {
-            size_t fv = size_t(shps[s].mesh.num_face_vertices[f]);
-
-            // Loop over vertices in the face.
-            for (size_t v = 0; v < fv; v++) {
-                // access to vertex
-                tinyobj::index_t idx = shps[s].mesh.indices[index_offset + v];
-                tinyobj::real_t vx = attrib.vertices[3*size_t(idx.vertex_index)+0];
-                tinyobj::real_t vy = attrib.vertices[3*size_t(idx.vertex_index)+1];
-                tinyobj::real_t vz = attrib.vertices[3*size_t(idx.vertex_index)+2];
-
-                // Check if `normal_index` is zero or positive. negative = no normal data
-                if (idx.normal_index >= 0) {
-                    tinyobj::real_t nx = attrib.normals[3*size_t(idx.normal_index)+0];
-                    tinyobj::real_t ny = attrib.normals[3*size_t(idx.normal_index)+1];
-                    tinyobj::real_t nz = attrib.normals[3*size_t(idx.normal_index)+2];
-                }
-
-                // Check if `texcoord_index` is zero or positive. negative = no texcoord data
-                if (idx.texcoord_index >= 0) {
-                    tinyobj::real_t tx = attrib.texcoords[2*size_t(idx.texcoord_index)+0];
-                    tinyobj::real_t ty = attrib.texcoords[2*size_t(idx.texcoord_index)+1];
-                }
-            }
-            index_offset += fv;
-
-            // per-face material
-            shps[s].mesh.material_ids[f];
-        }
-        return true;
-    }
+        prims.push_back(p);
+        numPrimitives++;
+    } // end iterate over shapes
+    return true;
 }
 
-bool Scene::trace (Ray r, Intersection *isect) {
+bool Scene::trace(Ray r, Intersection *isect)
+{
     Intersection curr_isect;
-    bool intersection = false;    
-    
-    if (numPrimitives==0) return false;
-    
+    bool intersection = false;
+
+    if (numPrimitives == 0)
+        return false;
+
     // iterate over all primitives
-    for (auto prim_itr = prims.begin() ; prim_itr != prims.end() ; prim_itr++) {
-        if ((*prim_itr)->g->intersect(r, &curr_isect)) {
-            if (!intersection) { // first intersection
+    for (auto prim_itr = prims.begin(); prim_itr != prims.end(); prim_itr++)
+    {
+        if ((*prim_itr)->g->intersect(r, &curr_isect))
+        {
+            if (!intersection)
+            { // first intersection
                 intersection = true;
                 *isect = curr_isect;
                 isect->f = BRDFs[(*prim_itr)->material_ndx];
             }
-            else if (curr_isect.depth < isect->depth) {
+            else if (curr_isect.depth < isect->depth)
+            {
                 *isect = curr_isect;
                 isect->f = BRDFs[(*prim_itr)->material_ndx];
             }
@@ -243,16 +279,21 @@ bool Scene::trace (Ray r, Intersection *isect) {
 }
 
 // checks whether a point on a light source (distance maxL) is visible
-bool Scene::visibility (Ray s, const float maxL) {
+bool Scene::visibility(Ray s, const float maxL)
+{
     bool visible = true;
     Intersection curr_isect;
-    
-    if (numPrimitives==0) return true;
-    
+
+    if (numPrimitives == 0)
+        return true;
+
     // iterate over all primitives while visible
-    for (auto prim_itr = prims.begin() ; prim_itr != prims.end() && visible ; prim_itr++) {
-        if ((*prim_itr)->g->intersect(s, &curr_isect)) {
-            if (curr_isect.depth < maxL) {
+    for (auto prim_itr = prims.begin(); prim_itr != prims.end() && visible; prim_itr++)
+    {
+        if ((*prim_itr)->g->intersect(s, &curr_isect))
+        {
+            if (curr_isect.depth < maxL)
+            {
                 visible = false;
             }
         }
