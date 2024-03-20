@@ -113,58 +113,16 @@ bool Scene::Load(const std::string &fname)
     // ter acesso aos vértices e à mesh
 
     // get the vertices
-    // const tinyobj::attrib_t attrib = myObj.GetAttrib();
-    // const float *vtcs = attrib.vertices.data();
-    // const std::vector<tinyobj::shape_t> shapes = myObj.GetShapes();
-
-    // iterate over shapes
-    /*
-    for (size_t shapeIndex = 0; shapeIndex < shapes.size(); shapeIndex++)
-    {
-        // Loop over faces(polygon)
-        size_t index_offset = 0;
-        for (size_t faceIndex = 0; faceIndex < shapes[shapeIndex].mesh.num_face_vertices.size(); faceIndex++)
-        {
-            size_t fv = size_t(shapes[shapeIndex].mesh.num_face_vertices[faceIndex]);
-
-            // Loop over vertices in the face.
-            for (size_t vertexIndex = 0; vertexIndex < fv; vertexIndex++)
-            {
-                // access to vertex
-                tinyobj::index_t idx = shapes[shapeIndex].mesh.indices[index_offset + vertexIndex];
-                tinyobj::real_t vx = attributes.vertices[3 * size_t(idx.vertex_index) + 0];
-                tinyobj::real_t vy = attributes.vertices[3 * size_t(idx.vertex_index) + 1];
-                tinyobj::real_t vz = attributes.vertices[3 * size_t(idx.vertex_index) + 2];
-
-                // Check if `normal_index` is zero or positive. negative = no normal data
-                if (idx.normal_index >= 0)
-                {
-                    tinyobj::real_t nx = attributes.normals[3 * size_t(idx.normal_index) + 0];
-                    tinyobj::real_t ny = attributes.normals[3 * size_t(idx.normal_index) + 1];
-                    tinyobj::real_t nz = attributes.normals[3 * size_t(idx.normal_index) + 2];
-                }
-
-                // Check if `texcoord_index` is zero or positive. negative = no texcoord data
-                if (idx.texcoord_index >= 0)
-                {
-                    tinyobj::real_t tx = attributes.texcoords[2 * size_t(idx.texcoord_index) + 0];
-                    tinyobj::real_t ty = attributes.texcoords[2 * size_t(idx.texcoord_index) + 1];
-                }
-            }
-            index_offset += fv;
-
-            // per-face material
-            shapes[shapeIndex].mesh.material_ids[faceIndex];
-        }*/
-
-    // get the vertices
+    //const tinyobj::attrib_t attrib = myObj.GetAttrib();
+    //const float *vtcs = attrib.vertices.data();
+    //const std::vector<tinyobj::shape_t> shapes = myObj.GetShapes();
+        // get the vertices
     const tinyobj::attrib_t attrib = myObj.GetAttrib();
     const float *vtcs = attrib.vertices.data();
 
-    // iterate over shapes
+    // access the shapes (each shape is one mesh)
     const std::vector<tinyobj::shape_t> shps = myObj.GetShapes();
-    for (auto shp = shps.begin(); shp != shps.end(); shp++)
-    {
+    for (auto shp = shps.begin(); shp != shps.end(); shp++){
         Primitive *p = new Primitive;
         Mesh *m = new Mesh;
         p->g = m;
@@ -178,62 +136,51 @@ bool Scene::Load(const std::string &fname)
         m->bb.max.set(vtcs[V1st], vtcs[V1st + 1], vtcs[V1st + 2]);
 
         // estrutura rehash (não existia em nenhum lado do código)
-        struct rehash
-        {
+        struct rehash{
             int objNdx;
             int ourNdx;
 
-            bool operator<(const rehash &other) const
-            {
-                // Define your comparison logic here. For example:
+            bool operator<(const rehash &other) const{
+            // Define your comparison logic here. For example:
                 return objNdx < other.objNdx;
             }
         };
 
         // add faces and vertices
         std::set<rehash> vert_rehash;
-        for (auto v_it = shp->mesh.indices.begin(); v_it != shp->mesh.indices.end();)
-        {
+        for (auto v_it = shp->mesh.indices.begin(); v_it != shp->mesh.indices.end();){
             Face *f = new Face;
             Point myVtcs[3];
             // process 3 vertices
-            for (int v = 0; v < 3; v++)
-            {
+            for (int v = 0; v < 3; v++){
                 const int objNdx = v_it->vertex_index;
                 myVtcs[v].set(vtcs[objNdx * 3], vtcs[objNdx * 3 + 1], vtcs[objNdx * 3 + 2]);
-                if (v == 0)
-                {
+                if (v == 0){
                     f->bb.min.set(myVtcs[0].X, myVtcs[0].Y, myVtcs[0].Z);
                     f->bb.max.set(myVtcs[0].X, myVtcs[0].Y, myVtcs[0].Z);
-                }
-                else
-                {
-                    f->bb.update(myVtcs[v]);
-                }
-
-                // add vertex to mesh if new
-                rehash new_vert = {objNdx, 0};
+                }else{
+                        f->bb.update(myVtcs[v]);
+                    }
+                rehash new_vert={objNdx, 0};
                 auto known_vert = vert_rehash.find(new_vert);
-                if (known_vert == vert_rehash.end())
-                { // new vertice, add it to the mesh
-                    new_vert.ourNdx = m->numVertices;
-                    vert_rehash.insert(new_vert);
-                    m->vertices.push_back(myVtcs[v]);
-                    m->numVertices++;
-                    // register in the face
-                    f->vert_ndx[v] = new_vert.ourNdx;
-                    m->bb.update(myVtcs[v]);
-                }
-                else
-                    f->vert_ndx[v] = known_vert->ourNdx;
-                v_it++; // next vértice within this face (there are 3)
-            }           //    end vertices
+                if (known_vert == vert_rehash.end()){ // new vertice, add it to the mesh
+                        new_vert.ourNdx = m->numVertices;
+                        vert_rehash.insert(new_vert);
+                        m->vertices.push_back(myVtcs[v]);
+                        m->numVertices++;
+                        // register in the face
+                        f->vert_ndx[v] = new_vert.ourNdx;
+                        m->bb.update(myVtcs[v]);
+                    }
+                    else
+                        f->vert_ndx[v] = known_vert->ourNdx;
+                    v_it++; // next vértice within this face (there are 3)
+                }           //    end vertices
 
             // add face to mesh: compute the geometric normal
             Vector v1 = myVtcs[0].vec2point(myVtcs[1]);
             Vector v2 = myVtcs[0].vec2point(myVtcs[2]);
-            f->edge1 = v1;
-            f->edge2 = v2;
+            f->edge1 = v1;f->edge2 = v2;
             Vector normal = v1.cross(v2);
             normal.normalize();
             f->geoNormal.set(normal);
@@ -241,13 +188,13 @@ bool Scene::Load(const std::string &fname)
             // add face to mesh
             m->faces.push_back(*f);
             m->numFaces++;
-        } // end iterate vértices in the mesh (shape)
-        // add primitive to scene
-        prims.push_back(p);
-        numPrimitives++;
-    } // end iterate over shapes
-    return true;
-}
+            } // end iterate vértices in the mesh (shape)
+            // add primitive to scene
+            prims.push_back(p);
+            numPrimitives++;
+        } // end iterate over shapes
+        return true;
+    }
 
 bool Scene::trace(Ray r, Intersection *isect)
 {

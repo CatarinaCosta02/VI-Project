@@ -19,29 +19,57 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
 
     // n * (p - p0) = 0, onde n é a normal da face, p é um ponto na face e p0 é um ponto na face
     // n = (v1 - v0) x (v2 - v0)
+    // acessar os vertices da face
     Point p0 = vertices[f.vert_ndx[0]];
     Point p1 = vertices[f.vert_ndx[1]];
     Point p2 = vertices[f.vert_ndx[2]];
 
-    Vector edge1 = p1 - p0;
-    Vector edge2 = p2 - p0;
-    Vector h = r.direction.cross(edge2);
+    // Point (float x, float y, float z):X(x),Y(y),Z(z){}
+    //Vector edge1 = p1 - p0;
+    Vector edge1(p1.X - p0.X, p1.Y - p0.Y, p1.Z - p0.Z);
+    Vector edge2(p2.X - p0.X, p2.Y - p0.Y, p2.Z - p0.Z);
+    Vector h = r.dir.cross(edge2);
     float a = edge1.dot(h);
 
     // verifica se o raio é paralelo ao triangulo
     if (a > -0.00001f && a < 0.00001f)
         return false;
 
-    float f = 1.0f / a;
-    Vector s = r.origin - p0;
-    float u = f * s.dot(h);
+    float inv_det = 1.0f / a;
+    Vector s(r.o.X - p0.X, r.o.Y - p0.Y, r.o.Z - p0.Z);
+    float u = inv_det * s.dot(h);
 
+    // The coefficients must be non-negative and sum to 1, 
     if (u < 0.0f || u > 1.0f)
         return false;
     
     Vector q = s.cross(edge1);
-    
+    float v = inv_det * r.dir.dot(q);
 
+    if (v < 0.0f || u + v > 1.0f)
+        return false;
+    
+    // at this stage we can compute t to find out where the intersection point is on the line
+    float t = inv_det * edge2.dot(q);
+
+    if (t > 0.00001f) // ray intersection
+    {
+        // out_intersection_point = ray_origin + ray_vector * t;
+        Point intersection_point = r.o + r.dir * t;
+
+        // mandar informações para o isect
+        isect->p = intersection_point;
+        isect->gn = f.geoNormal;
+        isect->sn = f.geoNormal;
+        Vector wo = r.dir * -1.0f;
+       // make sure the normal (gn and sn) points to the same side of the surface as w
+        wo.normalize();
+        isect->wo = wo;
+        isect->depth = t;
+        isect->FaceID = f.FaceID;
+
+        return true;
+    }
     return false;
 }
 

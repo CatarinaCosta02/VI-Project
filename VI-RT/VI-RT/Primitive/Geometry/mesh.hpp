@@ -23,8 +23,8 @@ typedef struct Face {
                 // this is min={0.,0.,0.} , max={0.,0.,0.} due to the Point constructor
     
     // adicionei estes atributos à Face
-    //Vector edge1;  
-    //Vector edge2;
+    Vector edge1;  
+    Vector edge2;
     int FaceID;
 } Face;
 
