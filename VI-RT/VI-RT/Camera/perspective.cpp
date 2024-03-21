@@ -1,3 +1,31 @@
+
+//
+//  perspective.cpp
+//  VI-RT
+//
+//  Created by Luis Paulo Santos on 10/02/2023.
+//
+
+#include "perspective.hpp"
+
+bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
+
+    
+
+    return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+/*
 // Constructor:
 // Inherits from the Camera class, passing the provided parameters to the Camera constructor.
 // Initializes the Perspective object with the specified parameters.
@@ -37,16 +65,23 @@ void Perspective::computeCameraToWorld() {
     c2w[0][0] = 1.0f; c2w[0][1] = 0.0f; c2w[0][2] = 0.0f;
     c2w[1][0] = 0.0f; c2w[1][1] = 1.0f; c2w[1][2] = 0.0f;
     c2w[2][0] = 0.0f; c2w[2][1] = 0.0f; c2w[2][2] = 1.0f;
-    // Print a message to indicate that ToneMap is complete
+    // Print a message to indicate that Camara is complete
     std::cout << "Camara working." << std::endl;
 }
 
 // Method to generate a ray
 bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
     // Convert pixel coordinates to normalized device coordinates
-    float ndcX = (2.0f * x - W) / W;
-    float ndcY = (2.0f * y - H) / H;
+     float ndcX = (2.0f * x - W) / W;
+     float ndcY = (2.0f * y - H) / H;
 
+    // cam_jitter (acho que temos já de fazer isto idk, tem a ver com o noise, já que estava em cima no Perspective::GenerateRay)
+    
+    /*bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
+    return false;
+}
+
+    
     // Compute the ray direction in camera space
     Vector dir(ndcX, ndcY, -1.0f); // Assuming the near plane is at z=-1
 
@@ -61,6 +96,10 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     // Set the ray origin and direction
     r->o = Eye; // Use 'o' for origin
     r->dir = dirWorld; // Use 'dir' for direction
+    // O prof pos isto:
+    r->pix_x = x;
+    r->pix_y = y;
 
     return true;
 }
+*/

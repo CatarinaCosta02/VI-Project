@@ -11,6 +11,31 @@
 // responsible for generating rays based on the camera parameters and screen coordinates.
 // The getResolution function provides an interface to retrieve the camera's image resolution.
 
+//
+//  camera.hpp
+//  VI-RT
+//
+//  Created by Luis Paulo Santos on 10/02/2023.
+//
+// Fernas vou dar commit nisto
+#ifndef camera_hpp
+#define camera_hpp
+
+#include "ray.hpp"
+
+// based on pbrt book, sec 6.1, pag. 356
+class Camera {
+public:
+    Camera () {}
+    ~Camera() {}
+    virtual bool GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter=nullptr) {return false;};
+    virtual void getResolution (int *_W, int *_H) {*_W=0; *_H=0;}
+};
+
+#endif /* camera_hpp */
+
+
+/*
 #ifndef camera_hpp
 #define camera_hpp
 

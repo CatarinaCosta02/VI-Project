@@ -72,6 +72,8 @@ bool Scene::Load(const std::string &fname)
     {
         return false;
     }
+
+    PrintInfo(myObjReader);
     // get the materials
     const std::vector<tinyobj::material_t> materials = myObj.GetMaterials();
 
@@ -107,8 +109,6 @@ bool Scene::Load(const std::string &fname)
         BRDFs.push_back(mat);
         numBRDFs++;
     }
-
-    PrintInfo(myObjReader);
 
     // ter acesso aos vértices e à mesh
 

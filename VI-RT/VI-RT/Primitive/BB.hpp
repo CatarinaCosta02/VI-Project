@@ -11,6 +11,8 @@
 #include "vector.hpp"
 #include "ray.hpp"
 
+#include <iostream>
+
 typedef struct BB {
 public:
     Point min, max;
@@ -35,8 +37,12 @@ public:
     
     // https://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms
     // eu segui isto
-    // esta função verifica primeiro de o rai interseta o plano da Bounding Box
+    // esta função verifica primeiro se o rai interseta o plano da Bounding Box
     bool intersect (Ray r) { 
+
+        if (r.pix_x == 320 && r.pix_y == 240) {
+            std::cout << "Ray: " << r.pix_x << " " << r.pix_y << std::endl;
+        }
         // primerio calcular os valores inversos das componentes do raio
         float invDirX = 1.0f / r.dir.X;
         float invDirY = 1.0f / r.dir.Y;
