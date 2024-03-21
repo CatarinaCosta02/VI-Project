@@ -6,100 +6,89 @@
 //  Created by Luis Paulo Santos on 10/02/2023.
 //
 
-#include "perspective.hpp"
+#include "perspective.hpp"  // Inclui o cabeçalho da classe Perspective
+#include <iostream>
 
+Perspective::Perspective(Point Eye, const Point At, Vector Up, const int W, const int H, const float fovW, const float fovH)
+    : Eye(Eye), At(At), Up(Up), W(W), H(H), fovW(fovW), fovH(fovH) {
+    
+    Vector Forward, up, Right;  // Vetores para armazenar a direção para frente, para cima e para a direita
+
+    // Calcula o vetor "Forward" representando a direção do olho (Eye) para o ponto de destino (At)
+    Forward = Eye.vec2point(At);
+    Forward.normalize(); // Normaliza o vetor 'Forward'
+
+    // Calcula o vetor "Right" como o produto vetorial entre o vetor 'Up' e 'Forward'
+    Right = up.cross(Forward);
+    Right.normalize();  // Normaliza o vetor 'Right'
+
+    // Calcula o vetor 'Up' como o produto vetorial entre os vetores 'Forward' e 'Right'
+    up = Forward.cross(Right);
+    up.normalize();  // Normaliza o vetor 'Up'
+
+    // Preenche a matriz de transformação 'c2w' com os vetores normalizados 'Right', 'Up' e 'Forward'
+    c2w[0][0] = Right.X; c2w[0][1] = Right.Y; c2w[0][2] = Right.Z;
+    c2w[1][0] = up.X; c2w[1][1] = up.Y; c2w[1][2] = up.Z;
+    c2w[2][0] = Forward.X; c2w[2][1] = Forward.Y; c2w[2][2] = Forward.Z;
+}
+
+
+// Implementação do método GenerateRay da classe Perspective
 bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
 
-    
+    float ndcX;  // Variável para armazenar a coordenada x normalizada do dispositivo (NDC)
+    float ndcY;  // Variável para armazenar a coordenada y normalizada do dispositivo (NDC)
 
-    return false;
-}
+    // Verifica se foi aplicado jitter à câmera
+    if (cam_jitter == NULL) {
+        // Se não houver jitter, calcula as coordenadas NDC sem alterações
+        ndcX = (2.0f * (x + 0.5f) / W) - 1.0f;
+        ndcY = (2.0f * (y + 0.5f) / H) - 1.0f;
+    } else {
+        // Se houver jitter, calcula as coordenadas NDC com base no jitter aplicado
+        ndcX = 2.f * ((float)x + cam_jitter[0]) / W - 1.f;
+        ndcY = 2.f * ((float)y + cam_jitter[1]) / H - 1.f;
+    }
 
+    // Cria um vetor de direção usando as coordenadas NDC calculadas
+    Vector dir = Vector(ndcX, ndcY, 1);
 
-
-
-
-
-
-
-
-
-
-/*
-// Constructor:
-// Inherits from the Camera class, passing the provided parameters to the Camera constructor.
-// Initializes the Perspective object with the specified parameters.
-
-// computeCameraToWorld Method:
-// Placeholder method to compute the camera-to-world matrix (c2w). This matrix represents the transformation from camera space 
-// to world space. You should replace this placeholder with the actual computation based on the camera's position, orientation, 
-// and field of view.
-
-// GenerateRay Method:
-// Converts pixel coordinates to normalized device coordinates (NDC).
-// Computes the ray direction in camera space based on the normalized device coordinates.
-// Transforms the ray direction from camera space to world space using the camera-to-world matrix (c2w).
-// Normalizes the ray direction.
-// Sets the ray's origin and direction and returns true.
-
-
-// perspective.cpp
-#include "perspective.hpp"
-#include "vector.hpp"
-#include "Ray.hpp" // Include the Ray header
-#include "camera.hpp" // Include the Camera header
-#include <iostream> // Include the iostream library for printing messages
-
-// Constructor
-Perspective::Perspective(const Point Eye, const Point At, const Vector Up, const int W, const int H, const float fovW, const float fovH)
-    : Camera(Eye, At, Up, fovW, W, H), // Call the Camera constructor with the provided parameters
-      Eye(Eye), At(At), Up(Up), W(W), H(H), fovW(fovW), fovH(fovH) {
-    // Call the method to compute the camera-to-world matrix
-    computeCameraToWorld();
-}
-
-// Method to compute the camera-to-world matrix
-void Perspective::computeCameraToWorld() {
-    // Compute the camera-to-world matrix based on the camera's position, orientation, and field of view
-    // This is a placeholder implementation. You need to replace it with your actual computation.
-    c2w[0][0] = 1.0f; c2w[0][1] = 0.0f; c2w[0][2] = 0.0f;
-    c2w[1][0] = 0.0f; c2w[1][1] = 1.0f; c2w[1][2] = 0.0f;
-    c2w[2][0] = 0.0f; c2w[2][1] = 0.0f; c2w[2][2] = 1.0f;
-    // Print a message to indicate that Camara is complete
-    std::cout << "Camara working." << std::endl;
-}
-
-// Method to generate a ray
-bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
-    // Convert pixel coordinates to normalized device coordinates
-     float ndcX = (2.0f * x - W) / W;
-     float ndcY = (2.0f * y - H) / H;
-
-    // cam_jitter (acho que temos já de fazer isto idk, tem a ver com o noise, já que estava em cima no Perspective::GenerateRay)
-    
-    /*bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
-    return false;
-}
+    // Transforma o vetor de direção do espaço da câmera para o espaço do mundo
+    Vector dirWorld = Vector(
+            c2w[0][0] * dir.X + c2w[0][1] * dir.Y + c2w[0][2] * dir.Z,
+            c2w[1][0] * dir.X + c2w[1][1] * dir.Y + c2w[1][2] * dir.Z,
+            c2w[2][0] * dir.X + c2w[2][1] * dir.Y + c2w[2][2] * dir.Z
+    );
 
     
-    // Compute the ray direction in camera space
-    Vector dir(ndcX, ndcY, -1.0f); // Assuming the near plane is at z=-1
+    // Ambas as formas são equivalentes e realizam a mesma operação. 
+    //A primeira forma (*r = Ray(Eye, dirWorld);) é uma expressão mais compacta, 
+    //enquanto a segunda forma (r->o = Eye; r->dir = dirWorld;) divide a 
+    //atribuição em duas linhas separadas para maior clareza.
 
-    // Transform the ray direction from camera space to world space
-    Vector dirWorld(c2w[0][0] * dir.X + c2w[0][1] * dir.Y + c2w[0][2] * dir.Z,
-                    c2w[1][0] * dir.X + c2w[1][1] * dir.Y + c2w[1][2] * dir.Z,
-                    c2w[2][0] * dir.X + c2w[2][1] * dir.Y + c2w[2][2] * dir.Z);
+    *r = Ray(Eye, dirWorld); // Define o raio com origem na posição da câmera e direção transformada
 
-    // Normalize the ray direction
-    dirWorld.normalize();
-
-    // Set the ray origin and direction
-    r->o = Eye; // Use 'o' for origin
-    r->dir = dirWorld; // Use 'dir' for direction
-    // O prof pos isto:
+    // r->o = Eye; // Define a origem do raio como a posição da câmera
+    // r->dir = dirWorld; // Define a direção do raio como a direção transformada
     r->pix_x = x;
     r->pix_y = y;
 
-    return true;
+    // Retorna falso, indicando que não houve erro na geração do raio
+    return false;
 }
-*/
+
+void Perspective::Information() {
+    // Imprime informações sobre a posição do olho (Eye) e do ponto para onde a câmera está a apontar (At)
+    std::cout << "Posicao do Olho (Eye): (" << Eye.X << ", " << Eye.Y << ", " << Eye.Z << ")" << std::endl;
+    std::cout << "Ponto para onde a camera esta a apontar (At): (" << At.X << ", " << At.Y << ", " << At.Z << ")" << std::endl;
+
+    // Imprime informações sobre a largura (W) e altura (H) da janela de visualização
+    std::cout << "Largura da janela de visualizacao (W): " << W << std::endl;
+    std::cout << "Altura da janela de visualizacao (H): " << H << std::endl;
+
+    // Imprime informações sobre os ângulos de campo de visão horizontal (fovW) e vertical (fovH)
+    std::cout << "Angulo de campo de visao horizontal (fovW): " << fovW << " graus" << std::endl;
+    std::cout << "Angulo de campo de visao vertical (fovH): " << fovH << " graus" << std::endl;
+
+    std::cout << "A camara esta funcional!" << std::endl;
+}
