@@ -23,7 +23,7 @@ void ImagePPM::ToneMap () {
         }
     }
     // Print a message to indicate that ToneMap is complete
-    std::cout << "ToneMapping completed." << std::endl;
+    std::cout << "ToneMapping completed!" << std::endl;
     
 }
 

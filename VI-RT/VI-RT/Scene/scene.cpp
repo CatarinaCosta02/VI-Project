@@ -70,6 +70,7 @@ bool Scene::Load(const std::string &fname)
     ObjReader myObj;
     if (!myObj.ParseFromFile(fname))
     {
+        std::cout << "Error loading file ";
         return false;
     }
 
@@ -106,8 +107,8 @@ bool Scene::Load(const std::string &fname)
         mat->Kt.B = it->transmittance[2];
 
         // adicionar o material à lista de BRDFs, que é usada para modelar como a luz é refletida em superfícies
-        BRDFs.push_back(mat);
-        numBRDFs++;
+        this->BRDFs.push_back(mat);
+        this->numBRDFs++;
     }
 
     // ter acesso aos vértices e à mesh
