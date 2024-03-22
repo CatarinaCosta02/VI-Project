@@ -17,7 +17,7 @@ public:
     StandardRenderer (Camera *cam, Scene * scene, Image * img, Shader *shd, int _spp): Renderer(cam, scene, img, shd) {
         spp = _spp;
     }
-    void Render ();
+    void Render(float *cam_jitter); // Add the cam_jitter parameter here
 };
 
 #endif /* StandardRenderer_hpp */

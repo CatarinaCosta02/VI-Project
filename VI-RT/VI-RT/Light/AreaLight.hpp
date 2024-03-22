@@ -28,14 +28,37 @@ public:
     RGB L (Point p) {return power;}
     RGB L () {return power;}
     // return a point p, RGB radiance and pdf given a pair of random number in [0..[
-    RGB Sample_L (float *r, Point *p, float &_pdf) {
-        // sample point as described in the "Gloabl illumination Compendium", page 12, item 18
- 
-        // ...
-        
-        _pdf = pdf;
-        return intensity;
-    }
+    RGB Sample_L(float *r, Point *p, float &_pdf) {
+    // Gere duas amostras aleatórias na faixa [0, 1]
+    float u = r[0];
+    float v = r[1];
+    
+    // Amostrar um ponto aleatório dentro do triângulo usando coordenadas baricêntricas
+    // Aqui, estamos usando coordenadas baricêntricas para amostrar um ponto aleatório dentro do triângulo.
+    // Isso nos permite amostrar pontos uniformemente distribuídos dentro do triângulo.
+    float sqrt_u = sqrt(u);
+    float alpha = 1.0f - sqrt_u;
+    float beta = (1.0f - v) * sqrt_u;
+    float gamma = v * sqrt_u;
+
+    // Calcula o ponto de amostragem dentro do triângulo
+    // Usamos as coordenadas baricêntricas para interpolar os vértices do triângulo
+    // e calcular as coordenadas tridimensionais do ponto de amostragem dentro do triângulo.
+    p->X = alpha * gem->v1.X + beta * gem->v2.X + gamma * gem->v3.X;
+    p->Y = alpha * gem->v1.Y + beta * gem->v2.Y + gamma * gem->v3.Y;
+    p->Z = alpha * gem->v1.Z + beta * gem->v2.Z + gamma * gem->v3.Z;
+
+    // Calcula a densidade de probabilidade de amostragem no ponto de amostragem
+    // Aqui, estamos atribuindo a densidade de probabilidade de amostragem ao parâmetro _pdf.
+    // Geralmente, isso é apenas um valor constante que representa a densidade de probabilidade uniforme dentro do triângulo.
+    _pdf = pdf;
+
+    // Retorna a intensidade da luz no ponto de amostragem
+    // Aqui, estamos retornando a intensidade da luz no ponto de amostragem.
+    // Isso geralmente é constante para luzes de área, então não muda com a posição de amostragem dentro do triângulo.
+    return intensity;
+}
+
 };
 
 #endif /* AreaLight_hpp */

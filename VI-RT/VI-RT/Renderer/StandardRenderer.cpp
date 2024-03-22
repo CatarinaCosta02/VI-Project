@@ -7,12 +7,13 @@
 
 #include "StandardRenderer.hpp"
 
-void StandardRenderer::Render () {
+void StandardRenderer::Render(float *cam_jitter) {
     int W=0,H=0;  // resolution
     int x,y;
 
     // get resolution from the camera
-    // ...
+    cam->getResolution(&W, &H);
+    std::cout << "Resolucao: " << W << "x" << H << "\n";
     
     // main rendering loop: get primary rays from the camera until done
     for (y=0 ; y< H ; y++) {  // loop over rows
@@ -23,7 +24,7 @@ void StandardRenderer::Render () {
             RGB color;
           
             // Generate Ray (camera)
-            // ...
+            bool True = cam->GenerateRay(x, y, &primary, cam_jitter);
             
             // trace ray (scene)
             // ...
