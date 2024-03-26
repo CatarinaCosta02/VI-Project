@@ -18,7 +18,7 @@ typedef struct Face {
     int vert_ndx[3];            // indices to our internal vector of vertices (in Mesh)
     Vector geoNormal;           // geometric normal
     bool hasShadingNormals;     // are there per vertex shading normals ??
-    int vert_normals_ndx[3];    // indices to veritices normals
+    int vert_normals_ndx[3];    // indices to vertices normals
     BB bb;      // face bounding box
                 // this is min={0.,0.,0.} , max={0.,0.,0.} due to the Point constructor
     

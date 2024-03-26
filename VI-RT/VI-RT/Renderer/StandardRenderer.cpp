@@ -7,7 +7,8 @@
 
 #include "StandardRenderer.hpp"
 
-void StandardRenderer::Render(float *cam_jitter) {
+//void StandardRenderer::Render(float *cam_jitter) {
+  void StandardRenderer::Render() {
     int W=0,H=0;  // resolution
     int x,y;
 
@@ -24,7 +25,7 @@ void StandardRenderer::Render(float *cam_jitter) {
             RGB color;
           
             // Generate Ray (camera)
-            bool True = cam->GenerateRay(x, y, &primary, cam_jitter);
+            //bool True = cam->GenerateRay(x, y, &primary, cam_jitter);
             
             // trace ray (scene)
             // ...

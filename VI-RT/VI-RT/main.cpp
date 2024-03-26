@@ -29,7 +29,7 @@ int main(int argc, const char * argv[]) {
     clock_t start, end;
     double cpu_time_used;
     
-    success = scene.Load("./VI-RT/Scene/tinyobjloader/models/debug.txt");
+    success = scene.Load("./VI-RT/Scene/tinyobjloader/models/cornell_box.obj");
     
     if (!success) {
         std::cout << "ERROR!! :o\n";
