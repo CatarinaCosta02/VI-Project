@@ -33,12 +33,6 @@ static void PrintInfo(const ObjReader myObj)
     std::cout << "# of shapes    : " << shps.size() << std::endl;
     std::cout << "# of materials : " << materials.size() << std::endl;
 
-    // Print out normals
-    std::cout << "Normals:\n";
-    for (size_t i = 0; i < attrib.normals.size(); i += 3) {
-        std::cout << "Normal " << i / 3 << ": (" << attrib.normals[i] << ", " << attrib.normals[i + 1] << ", " << attrib.normals[i + 2] << ")\n";
-    }
-
     // Iterate shapes
     auto it_shape = shps.begin();
     for (; it_shape != shps.end(); it_shape++)
@@ -143,7 +137,6 @@ bool Scene::Load(const std::string &fname)
         m->bb.min.set(vtcs[V1st], vtcs[V1st + 1], vtcs[V1st + 2]);
         m->bb.max.set(vtcs[V1st], vtcs[V1st + 1], vtcs[V1st + 2]);
 
-
         
         // estrutura rehash (não existia em nenhum lado do código)
         struct rehash{
@@ -179,6 +172,7 @@ bool Scene::Load(const std::string &fname)
                     vert_rehash.insert(new_vert);
                     m->vertices.push_back(myVtcs[v]);
                     m->numVertices++;
+                    
                     // register in the face
                     f->vert_ndx[v] = new_vert.ourNdx;
                     m->bb.update(myVtcs[v]);
@@ -188,22 +182,21 @@ bool Scene::Load(const std::string &fname)
                 v_it++; // next vertice within this face (there are 3)
             }           //    end vertices
 
-            // compute the geometric normal
-            Vector v1 = myVtcs[0].vec2point(myVtcs[1]);
-            Vector v2 = myVtcs[0].vec2point(myVtcs[2]);
-            f->edge1 = v1;f->edge2 = v2;
-            Vector normal = v1.cross(v2);
+            // calculate the geometric normal
+            Point v0 = m->vertices[f->vert_ndx[0]];
+            Point v1 = m->vertices[f->vert_ndx[1]];
+            Point v2 = m->vertices[f->vert_ndx[2]];
+
+            Vector edge1 = Vector(v1.X - v0.X,
+                                  v1.Y - v0.Y,
+                                  v1.Z - v0.Z);
+            Vector edge2 = Vector(v2.X - v0.X,
+                                  v2.Y - v0.Y,
+                                  v2.Z - v0.Z);
+
+            Vector normal = edge1.cross(edge2);
             normal.normalize();
             f->geoNormal.set(normal);
-
-            // teste
-            normCount++;
-            std::cout << "NORMAL " << (normCount) << ": (" << (normal.X) << ", " << (normal.Y) << ", " << (normal.Z) << ")" << std::endl;
-            // guardar normal
-            attrib.normals.push_back(normal.X);
-            attrib.normals.push_back(normal.Y);
-            attrib.normals.push_back(normal.Z);
-
             f->FaceID = FaceID++;
             // add face to mesh
             m->faces.push_back(*f);
@@ -217,13 +210,6 @@ bool Scene::Load(const std::string &fname)
     PrintInfo(myObj);  
     return true;
 }
-
-bool SetLights (void) {
-    
-    //...
-
-    return true;
-};
 
 
 bool Scene::trace(Ray r, Intersection *isect)
