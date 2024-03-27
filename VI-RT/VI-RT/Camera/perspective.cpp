@@ -71,9 +71,9 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     //atribuição em duas linhas separadas para maior clareza.
 
     *r = Ray(Eye, dirWorld); // Define o raio com origem na posição da câmera e direção transformada
-
     // r->o = Eye; // Define a origem do raio como a posição da câmera
     // r->dir = dirWorld; // Define a direção do raio como a direção transformada
+    
     r->pix_x = x;
     r->pix_y = y;
 

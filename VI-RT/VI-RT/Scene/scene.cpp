@@ -16,6 +16,8 @@
 #include <iostream>
 #include <set>
 #include <vector>
+#include "AreaLight.hpp"
+
 
 using namespace tinyobj;
 
@@ -240,6 +242,40 @@ bool Scene::trace(Ray r, Intersection *isect)
     }
     return intersection;
 }
+
+
+
+int Scene::trace2(Ray r, Intersection *isect)
+{
+    Intersection curr_isect;
+    bool intersection = false;
+
+    // iterate over all primitives
+    for (auto prim_itr = prims.begin(); prim_itr != prims.end(); prim_itr++)
+    {
+        if ((*prim_itr)->g->intersect(r, &curr_isect))
+        {
+            if (!intersection)
+            { // first intersection
+                intersection = true;
+                *isect = curr_isect;
+                isect->f = BRDFs[(*prim_itr)->material_ndx];
+            }
+            else if (curr_isect.depth < isect->depth)
+            {
+                *isect = curr_isect;
+                isect->f = BRDFs[(*prim_itr)->material_ndx];
+            }
+        }
+    }
+    if (intersection)
+        return 10;
+    else
+        return 20;
+}
+
+
+
 
 // checks whether a point on a light source (distance maxL) is visible
 bool Scene::visibility(Ray s, const float maxL)

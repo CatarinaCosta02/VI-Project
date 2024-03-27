@@ -6,4 +6,5 @@ build/objects/VI-RT/Renderer/StandardRenderer.o: \
  VI-RT/Primitive/BB.hpp VI-RT/Rays/intersection.hpp \
  VI-RT/Primitive/BRDF/BRDF.hpp VI-RT/utils/RGB.hpp \
  VI-RT/Primitive/BRDF/BRDF.hpp VI-RT/Light/light.hpp \
- VI-RT/Image/image.hpp VI-RT/Shader/shader.hpp
+ VI-RT/Image/image.hpp VI-RT/Shader/shader.hpp \
+ VI-RT/Camera/perspective.hpp VI-RT/Camera/camera.hpp

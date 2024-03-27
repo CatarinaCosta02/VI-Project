@@ -21,7 +21,7 @@ protected:
     Shader *shd;
 public:
     Renderer (Camera *cam, Scene * scene, Image * img, Shader *shd): cam(cam), scene(scene), img(img), shd(shd) {}
-    virtual void Render (float *cam_jitter) {}
+    virtual void Render () {}
 };
 
 #endif /* renderer_hpp */
