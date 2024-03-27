@@ -11,19 +11,18 @@
 
 Perspective::Perspective(Point Eye, const Point At, Vector Up, const int W, const int H, const float fovW, const float fovH)
     : Eye(Eye), At(At), Up(Up), W(W), H(H), fovW(fovW), fovH(fovH) {
-    
-    Vector Forward, up, Right;  // Vetores para armazenar a direção para frente, para cima e para a direita
 
+    // Vetor para armazenar a direção para frente
     // Calcula o vetor "Forward" representando a direção do olho (Eye) para o ponto de destino (At)
-    Forward = Eye.vec2point(At);
+    Vector Forward = Eye.vec2point(At);
     Forward.normalize(); // Normaliza o vetor 'Forward'
 
-    // Calcula o vetor "Right" como o produto vetorial entre o vetor 'Up' e 'Forward'
-    Right = up.cross(Forward);
+    // Calcula o vetor 'Right' como o produto vetorial entre o vetor 'Up' e 'Forward'
+    Vector Right = Up.cross(Forward);
     Right.normalize();  // Normaliza o vetor 'Right'
 
     // Calcula o vetor 'Up' como o produto vetorial entre os vetores 'Forward' e 'Right'
-    up = Forward.cross(Right);
+    Vector up = Forward.cross(Right);
     up.normalize();  // Normaliza o vetor 'Up'
 
     // Preenche a matriz de transformação 'c2w' com os vetores normalizados 'Right', 'Up' e 'Forward'
@@ -33,9 +32,9 @@ Perspective::Perspective(Point Eye, const Point At, Vector Up, const int W, cons
 }
 
 
+
 // Implementação do método GenerateRay da classe Perspective
 bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
-
     float ndcX;  // Variável para armazenar a coordenada x normalizada do dispositivo (NDC)
     float ndcY;  // Variável para armazenar a coordenada y normalizada do dispositivo (NDC)
 
@@ -59,12 +58,11 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
 
     // Transforma o vetor de direção do espaço da câmera para o espaço do mundo
     Vector dirWorld = Vector(
-            c2w[0][0] * dir.X + c2w[0][1] * dir.Y + c2w[0][2] * dir.Z,
-            c2w[1][0] * dir.X + c2w[1][1] * dir.Y + c2w[1][2] * dir.Z,
-            c2w[2][0] * dir.X + c2w[2][1] * dir.Y + c2w[2][2] * dir.Z
+        c2w[0][0] * dir.X + c2w[0][1] * dir.Y + c2w[0][2] * dir.Z,
+        c2w[1][0] * dir.X + c2w[1][1] * dir.Y + c2w[1][2] * dir.Z,
+        c2w[2][0] * dir.X + c2w[2][1] * dir.Y + c2w[2][2] * dir.Z
     );
 
-    
     // Ambas as formas são equivalentes e realizam a mesma operação. 
     //A primeira forma (*r = Ray(Eye, dirWorld);) é uma expressão mais compacta, 
     //enquanto a segunda forma (r->o = Eye; r->dir = dirWorld;) divide a 
@@ -73,13 +71,14 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     *r = Ray(Eye, dirWorld); // Define o raio com origem na posição da câmera e direção transformada
     // r->o = Eye; // Define a origem do raio como a posição da câmera
     // r->dir = dirWorld; // Define a direção do raio como a direção transformada
-    
     r->pix_x = x;
     r->pix_y = y;
 
     // Retorna falso, indicando que não houve erro na geração do raio
     return false;
 }
+
+
 
 void Perspective::Information() {
     // Imprime informações sobre a posição do olho (Eye) e do ponto para onde a câmera está a apontar (At)

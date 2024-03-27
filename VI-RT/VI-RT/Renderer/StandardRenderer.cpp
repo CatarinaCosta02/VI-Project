@@ -14,18 +14,13 @@ void StandardRenderer::Render() {
     int x,y;
     
     // get resolution from the camera
-    cam->getResolution(&W, &H);
-    std::cout << "Resolucao: " << W << "x" << H << "\n";
-    // Perspective* perspCam = dynamic_cast<Perspective*>(cam);
-    // perspCam->getResolution(&W, &H);
-
-    const float spp = 256.0f;
+    Perspective* perspCam = dynamic_cast<Perspective*>(cam);
+    perspCam->getResolution(&W, &H);
 
     int white = 0;
     int black = 0;
     int other = 0;
     int numintersections = 0;
-    int numPrim = 0;
     int numIntersectionsNOT = 0;
     // main rendering loop: get primary rays from the camera until done
     for (y=0 ; y< H ; y++) {  // loop over rows
@@ -34,35 +29,52 @@ void StandardRenderer::Render() {
             Intersection isect;
             bool intersected;
             RGB color;
+            
+            // std::cout << "primary Ray (" << primary.pix_x << ", " << primary.pix_y << ")" << std::endl;
 
             // for (int ss = 0; ss < spp; ss++) {
                 // Generate Ray (camera)
-                cam->GenerateRay(x, y, &primary);
+                perspCam->GenerateRay(x, y, &primary);
 
+
+                // std::cout << "primary Ray (" << primary.pix_x << ", " << primary.pix_y << ")" << std::endl;
+
+
+                // PROBLEMA ESTÁ AQUI, ele não deteta nenhuma interseção, as primitivas estão a ser detetadas 
+                // mas o metodo intersect retorna sempre false
                 // trace ray (scene)
-                intersected = scene->trace(primary, &isect);
-                // if (intersected)
-                //     numintersections++;
 
-                int result = scene->trace2(primary, &isect);
-                if (result == 10)
+                // Point p;
+                // Vector gn;  // geometric normal
+                // Vector sn;  // shading normal (the same as gn for the time being)
+                // Vector wo;
+                // float depth;
+                // BRDF *f;
+                // bool isLight;  // for intersections with light sources
+                // RGB Le;   
+                
+                // isect.pix_x = x;
+                // isect.pix_y = y;                
+
+                intersected = scene->trace(primary, &isect);
+                if (intersected == true)
                     numintersections++;
-                else if (result == 20)
+                else 
                     numIntersectionsNOT++;
 
 
                 // shade this intersection (shader) - remember: depth=0
-                // RGB this_color = shd->shade(intersected, isect, 0);
                 color = shd->shade(intersected, isect, 0);
+                // RGB this_color = shd->shade(intersected, isect, 0);
 
                 // color += this_color;
             // }                
             // color = color / spp;
 
             // Normalize color components
-            color.R = std::min(1.0f, std::max(0.0f, color.R));
-            color.G = std::min(1.0f, std::max(0.0f, color.G));
-            color.B = std::min(1.0f, std::max(0.0f, color.B));
+            // color.R = std::min(1.0f, std::max(0.0f, color.R));
+            // color.G = std::min(1.0f, std::max(0.0f, color.G));
+            // color.B = std::min(1.0f, std::max(0.0f, color.B));
 
             if (color.R == 255 && color.G == 255 && color.B == 255)
                 white++;
@@ -78,17 +90,20 @@ void StandardRenderer::Render() {
 
     // TESTE(s)
     std::cout<<std::endl;
+    std::cout<< "******** Renderer/StandardRenderer.cpp ********" << std::endl;
+    // std::cout<<"Numero generated rays : " << (numGenerateRay) << std::endl;
     std::cout<<"Numero intersections (trace ray) : " << (numintersections) << std::endl;
     std::cout<<"Numero nao intersections trace ray : " << (numIntersectionsNOT) << std::endl;
     std::cout<<std::endl;
     std::cout<<"Numero pixels WHITE : " << (white) << " -> " << ((white/(W*H))*100) << "%" << std::endl;
     std::cout<<"Numero pixels BLACK : " << (black) << " -> " << ((black/(W*H))*100) << "%"  << std::endl;
     std::cout<<"Numero pixels OTHER (neste caso blue) : " << (other) << " -> " << ((other/(W*H))*100)  << "%" << std::endl;
+    std::cout<< "***********************************************" << std::endl;
     std::cout<<std::endl;
 
     // o chat disse isto:
     // Parece que sua imagem está sendo renderizada com a cor azul predominante. 
-    // Isso sugere que pode haver um problema na geração de raios, na detecção de interseção ou na sombra deles.
+    // Isso sugere que pode haver um problema na geração de raios (não é isto), na detecção de interseção (pode ser disto) ou na sombra deles.
     
     // *********************************************** CONTINUAR ***********************************************
 }

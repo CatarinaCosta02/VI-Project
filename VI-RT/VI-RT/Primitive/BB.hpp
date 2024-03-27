@@ -40,9 +40,9 @@ public:
     // esta função verifica primeiro se o rai interseta o plano da Bounding Box
     bool intersect (Ray r) { 
 
-        if (r.pix_x == 320 && r.pix_y == 240) {
-            std::cout << "Ray: " << r.pix_x << " " << r.pix_y << std::endl;
-        }
+        // if (r.pix_x == 320 && r.pix_y == 240) {
+            // std::cout << "Ray: " << r.pix_x << " " << r.pix_y << std::endl;
+        // }
         // primerio calcular os valores inversos das componentes do raio
         float invDirX = 1.0f / r.dir.X;
         float invDirY = 1.0f / r.dir.Y;
@@ -69,7 +69,7 @@ public:
         if (tmin > tmax)
             return false;
 
-        // se tmin é mairo que 0, quer dizer que o raio intersecta a BB
+        // se tmin é maior que 0, quer dizer que o raio intersecta a BB
         if (tmin > 0)
             return true;
 

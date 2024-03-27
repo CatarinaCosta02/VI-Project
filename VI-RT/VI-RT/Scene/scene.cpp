@@ -29,8 +29,7 @@ static void PrintInfo(const ObjReader myObj)
     std::cout << std::endl;
     std::cout << "# of vertices  : " << (attrib.vertices.size() / 3) << std::endl;
     std::cout << "# of normals   : " << (attrib.normals.size() / 3) << std::endl;
-    std::cout << "# of texcoords : " << (attrib.texcoords.size() / 2)
-              << std::endl;
+    std::cout << "# of texcoords : " << (attrib.texcoords.size() / 2) << std::endl;
 
     std::cout << "# of shapes    : " << shps.size() << std::endl;
     std::cout << "# of materials : " << materials.size() << std::endl;
@@ -189,12 +188,8 @@ bool Scene::Load(const std::string &fname)
             Point v1 = m->vertices[f->vert_ndx[1]];
             Point v2 = m->vertices[f->vert_ndx[2]];
 
-            Vector edge1 = Vector(v1.X - v0.X,
-                                  v1.Y - v0.Y,
-                                  v1.Z - v0.Z);
-            Vector edge2 = Vector(v2.X - v0.X,
-                                  v2.Y - v0.Y,
-                                  v2.Z - v0.Z);
+            Vector edge1 = Vector(v1.X - v0.X, v1.Y - v0.Y, v1.Z - v0.Z);
+            Vector edge2 = Vector(v2.X - v0.X, v2.Y - v0.Y, v2.Z - v0.Z);
 
             Vector normal = edge1.cross(edge2);
             normal.normalize();
@@ -222,10 +217,12 @@ bool Scene::trace(Ray r, Intersection *isect)
     if (numPrimitives == 0)
         return false;
 
+    int numERRO=0;
+    
     // iterate over all primitives
     for (auto prim_itr = prims.begin(); prim_itr != prims.end(); prim_itr++)
     {
-        if ((*prim_itr)->g->intersect(r, &curr_isect))
+        if ((*prim_itr)->g->intersect(r, &curr_isect)) // isto vai sempre retornar false por causa do method na class Geometry (acho que não é suposto mexer nisso...)
         {
             if (!intersection)
             { // first intersection
@@ -239,40 +236,46 @@ bool Scene::trace(Ray r, Intersection *isect)
                 isect->f = BRDFs[(*prim_itr)->material_ndx];
             }
         }
+        else {
+            numERRO++;
+            // std::cout << "intersect return false!!" << std::endl;
+        }
     }
+
     return intersection;
 }
 
 
 
-int Scene::trace2(Ray r, Intersection *isect)
-{
-    Intersection curr_isect;
-    bool intersection = false;
+// // TESTE
+// int Scene::trace2(Ray r, Intersection *isect)
+// {
+//     Intersection curr_isect;
+//     bool intersection = false;
 
-    // iterate over all primitives
-    for (auto prim_itr = prims.begin(); prim_itr != prims.end(); prim_itr++)
-    {
-        if ((*prim_itr)->g->intersect(r, &curr_isect))
-        {
-            if (!intersection)
-            { // first intersection
-                intersection = true;
-                *isect = curr_isect;
-                isect->f = BRDFs[(*prim_itr)->material_ndx];
-            }
-            else if (curr_isect.depth < isect->depth)
-            {
-                *isect = curr_isect;
-                isect->f = BRDFs[(*prim_itr)->material_ndx];
-            }
-        }
-    }
-    if (intersection)
-        return 10;
-    else
-        return 20;
-}
+//     // iterate over all primitives
+//     for (auto prim_itr = prims.begin(); prim_itr != prims.end(); prim_itr++)
+//     {
+//         if ((*prim_itr)->g->intersect(r, &curr_isect))
+//         {
+//             if (!intersection)
+//             { // first intersection
+//                 intersection = true;
+//                 *isect = curr_isect;
+//                 isect->f = BRDFs[(*prim_itr)->material_ndx];
+//             }
+//             else if (curr_isect.depth < isect->depth)
+//             {
+//                 *isect = curr_isect;
+//                 isect->f = BRDFs[(*prim_itr)->material_ndx];
+//             }
+//         }
+//     }
+//     if (intersection == true)
+//         return 10;
+//     else
+//         return 20;
+// }
 
 
 
