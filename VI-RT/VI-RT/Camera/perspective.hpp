@@ -45,6 +45,7 @@
 #include "camera.hpp"
 #include "ray.hpp"
 #include "vector.hpp"
+#include <cstddef>
 
 class Perspective: public Camera {
     Point Eye, At;
@@ -56,7 +57,7 @@ class Perspective: public Camera {
     float c2w[3][3];  // camera 2 world transform
 public:
     Perspective (Point Eye, Point At, Vector Up, int W, int H, float fovW, float fovH);
-    bool GenerateRay(int x, int y, Ray *r, const float *cam_jitter = nullptr);
+    bool GenerateRay(int x, int y, Ray *r, const float *cam_jitter = NULL);
     void getResolution(int *outW, int *outH) {
         *outW = W;
         *outH = H;

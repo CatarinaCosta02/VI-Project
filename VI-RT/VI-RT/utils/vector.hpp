@@ -47,6 +47,9 @@ public:
     float dot (const Vector v2) const {
         return X*v2.X + Y*v2.Y + Z*v2.Z;
     }
+
+    Vector inv() const {return { 1/X , 1/Y, 1/Z}; }
+
     // from pbrt book (3rd ed.), sec 2.2.1, pag 65
     Vector cross (Vector v2) const {
         double v1x = X, v1y = Y, v1z = Z;
