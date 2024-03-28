@@ -8,6 +8,7 @@
 
 #include "perspective.hpp"  // Inclui o cabeçalho da classe Perspective
 #include <iostream>
+#include <cstdlib>
 
 Perspective::Perspective(Point Eye, const Point At, Vector Up, const int W, const int H, const float fovW, const float fovH)
     : Eye(Eye), At(At), Up(Up), W(W), H(H), fovW(fovW), fovH(fovH) {
@@ -38,6 +39,11 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     float ndcX;  // Variável para armazenar a coordenada x normalizada do dispositivo (NDC)
     float ndcY;  // Variável para armazenar a coordenada y normalizada do dispositivo (NDC)
 
+
+    // float jitter[2];
+    // cam_jitter[0] = (rand() % 2 + 1) - 1;
+    // cam_jitter[1] = (rand() % 2 + 1) - 1;
+
     // Reduzir artefatos de aliasing, como serrilhados ou "dentes de serra"
     // especialmente em bordas diagonais ou linhas finas. 
     // O jitter é uma forma de introduzir uma pequena quantidade de aleatoriedade nas 
@@ -55,6 +61,8 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
 
     // Cria um vetor de direção usando as coordenadas NDC calculadas
     Vector dir = Vector(ndcX, ndcY, 1);
+
+    
 
     // Transforma o vetor de direção do espaço da câmera para o espaço do mundo
     Vector dirWorld = Vector(

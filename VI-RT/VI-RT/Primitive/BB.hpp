@@ -44,37 +44,44 @@ public:
             // std::cout << "Ray: " << r.pix_x << " " << r.pix_y << std::endl;
         // }
         // primerio calcular os valores inversos das componentes do raio
-        float invDirX = 1.0f / r.dir.X;
-        float invDirY = 1.0f / r.dir.Y;
-        float invDirZ = 1.0f / r.dir.Z;
+        // float invDirX = 1.0f / r.dir.X;
+        // float invDirY = 1.0f / r.dir.Y;
+        // float invDirZ = 1.0f / r.dir.Z;
 
         // calcular os valores de tmin e tmax
-        float tminX = (min.X - r.o.X) * invDirX;
-        float tmaxX = (max.X - r.o.X) * invDirX;
-        float tminY = (min.Y - r.o.Y) * invDirY;
-        float tmaxY = (max.Y - r.o.Y) * invDirY;
-        float tminZ = (min.Z - r.o.Z) * invDirZ;
-        float tmaxZ = (max.Z - r.o.Z) * invDirZ;
+        float tminX = (min.X - r.o.X) * r.invDir.X;
+        float tmaxX = (max.X - r.o.X) * r.invDir.X;
+        float tminY = (min.Y - r.o.Y) * r.invDir.Y;
+        float tmaxY = (max.Y - r.o.Y) * r.invDir.Y;
+        float tminZ = (min.Z - r.o.Z) * r.invDir.Z;
+        float tmaxZ = (max.Z - r.o.Z) * r.invDir.Z;
 
         // Encontra o tmin e tmax que são os menores e maiores entre os eixos
         float tmin = fmax(fmax(fmin(tminX, tmaxX), fmin(tminY, tmaxY)), fmin(tminZ, tmaxZ));
         float tmax = fmin(fmin(fmax(tminX, tmaxX), fmax(tminY, tmaxY)), fmax(tminZ, tmaxZ));
 
-        // se tmax < 0, o raio está intersectando atrás da origem
-        if (tmax < 0){
-            return false;
-        }
+        // // se tmax < 0, o raio está intersectando atrás da origem
+        // if (tmax < 0){
+        //     return false;
+        // }
 
-        // se tmin > tmax, o raio não intersecta a Bounding Box
-        if (tmin > tmax)
-            return false;
+        // // se tmin > tmax, o raio não intersecta a Bounding Box
+        // if (tmin > tmax)
+        //     return false;
 
-        // se tmin é maior que 0, quer dizer que o raio intersecta a BB
-        if (tmin > 0)
+        // // se tmin é maior que 0, quer dizer que o raio intersecta a BB
+        // if (tmin > 0)
+        //     return true;
+
+        // // se o tmax é maior ou igual a 0, o raio intersecta a BB
+        // if (tmax >= 0)
+        //     return true; 
+
+        if (tmin <= tmax)
             return true;
-
-        // se o tmax é maior ou igual a 0, o raio intersecta a BB
-        return tmax >= 0; }
+        else 
+            return false;
+    }
 } BB;
 
 #endif /* AABB_hpp */

@@ -30,54 +30,25 @@ void StandardRenderer::Render() {
             Intersection isect;
             bool intersected;
             RGB color;
+        
+
+            // Generate Ray (camera)        
+            bool generatedRay = perspCam->GenerateRay(x, y, &primary);
+            if (!generatedRay)
+                NOTgeneratedRay++;
+                       
+
             
-            // std::cout << "primary Ray (" << primary.pix_x << ", " << primary.pix_y << ")" << std::endl;
+            // trace ray (scene)
+            intersected = scene->trace(primary, &isect);
+            if (intersected == true)
+                numintersections++;
+            else 
+                numIntersectionsNOT++;
 
-            // for (int ss = 0; ss < spp; ss++) {
-                // Generate Ray (camera)
-                bool generatedRay = perspCam->GenerateRay(x, y, &primary);
-                if (!generatedRay)
-                    NOTgeneratedRay++;
+            // shade this intersection (shader) - remember: depth=0
+            color = shd->shade(intersected, isect, 0);
 
-
-                // std::cout << "primary Ray (" << primary.pix_x << ", " << primary.pix_y << ")" << std::endl;
-
-
-                // PROBLEMA ESTÁ AQUI, ele não deteta nenhuma interseção, as primitivas estão a ser detetadas 
-                // mas o metodo intersect retorna sempre false
-                // trace ray (scene)
-
-                // Point p;
-                // Vector gn;  // geometric normal
-                // Vector sn;  // shading normal (the same as gn for the time being)
-                // Vector wo;
-                // float depth;
-                // BRDF *f;
-                // bool isLight;  // for intersections with light sources
-                // RGB Le;   
-                
-                // isect.pix_x = x;
-                // isect.pix_y = y;                
-
-                intersected = scene->trace(primary, &isect);
-                if (intersected == true)
-                    numintersections++;
-                else 
-                    numIntersectionsNOT++;
-
-
-                // shade this intersection (shader) - remember: depth=0
-                color = shd->shade(intersected, isect, 0);
-                // RGB this_color = shd->shade(intersected, isect, 0);
-
-                // color += this_color;
-            // }                
-            // color = color / spp;
-
-            // Normalize color components
-            // color.R = std::min(1.0f, std::max(0.0f, color.R));
-            // color.G = std::min(1.0f, std::max(0.0f, color.G));
-            // color.B = std::min(1.0f, std::max(0.0f, color.B));
 
             if (color.R == 255 && color.G == 255 && color.B == 255)
                 white++;
