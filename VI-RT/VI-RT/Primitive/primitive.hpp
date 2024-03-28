@@ -10,10 +10,13 @@
 
 #include "Geometry/geometry.hpp"
 #include "BRDF/BRDF.hpp"
+#include <string> 
 
 typedef struct Primitive {
     Geometry *g;
     int material_ndx;
+    std::string material_name;
+    std::string object_name;
 } Primitive;
 
 #endif /* primitive_hpp */

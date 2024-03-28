@@ -36,7 +36,7 @@ int main(int argc, const char * argv[]) {
     scene.numLights++;
 
     success = scene.Load("./VI-RT/Scene/tinyobjloader/models/cornell_box.obj");
-    //success = scene.Load("./VI-RT/Scene/tinyobjloader/models/debug.txt");
+    // success = scene.Load("./VI-RT/Scene/tinyobjloader/models/debug.txt");
     
     if (!success) {
         std::cout << "ERROR!! :o\n";
@@ -48,15 +48,15 @@ int main(int argc, const char * argv[]) {
     std::cout << std::endl;
         
     // Image resolution
-    const int W= 1024;
-    const int H= 1024;
+    const int W= 512;
+    const int H= 512;
     
     img = new ImagePPM(W,H);
     
     // Camera parameters
     // const Point Eye ={0,0,0}, At={0,0,1}; 
      const Point Eye ={280,275,-330}, At={280,265,0};
-    //const Point Eye ={0,125,-100}, At={0,125,0}; // debug
+    // const Point Eye ={0,125,-100}, At={0,125,0}; // debug
     const Vector Up={0,-1,0};
     const float fovW = 90.f;
     const float fovH = fovW * (float)H/(float)W;  // in degrees

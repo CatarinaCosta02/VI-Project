@@ -116,6 +116,8 @@ bool Scene::Load(const std::string &fname)
         Mesh *m = new Mesh;
         p->g = m;
         p->material_ndx = shps[s].mesh.material_ids[0];
+        p->material_name = materials[p->material_ndx].name;
+        p->object_name = shps[s].name;
 
         const int V1st = shps[s].mesh.indices.begin()->vertex_index * 3;
         m->bb.min.set(vtcs[V1st], vtcs[V1st + 1], vtcs[V1st + 2]);
@@ -182,10 +184,10 @@ bool Scene::Load(const std::string &fname)
         prims.push_back(p);
         numPrimitives++;
         
-        std::cout << "Mesh " << s << std::endl;
+        std::cout << "Mesh " << s << " - " << p->object_name << std::endl;
         std::cout << "Number of Vertices: " << m->numVertices << std::endl;
         std::cout << "Number of Faces: " << m->numFaces << std::endl;
-        std::cout << "Material Index: " << p->material_ndx << std::endl;
+        std::cout << "Material Name: " << p->material_name << " (index: " << p->material_ndx << ")" << std::endl;
         std::cout << "Bounding Box Min: (" << m->bb.min.X << ", " << m->bb.min.Y << ", " << m->bb.min.Z << ")" << std::endl;
         std::cout << "Bounding Box Max: (" << m->bb.max.X << ", " << m->bb.max.Y << ", " << m->bb.max.Z << ")" << std::endl;
         std::cout << std::endl;

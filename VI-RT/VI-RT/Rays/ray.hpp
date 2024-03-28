@@ -20,11 +20,15 @@ public:
     int FaceID;  // ID of the face where the origin lays in
     Vector invDir;  // ray direction reciprocal for intersections
     int pix_x, pix_y;
-    float rayTmin, rayTmax;
-    Ray() : o(Point(0, 0, 0)), dir(Vector(0, 0, 0)), FaceID(0), invDir(Vector(0, 0, 0)), pix_x(0), pix_y(0), rayTmin(0.0), rayTmax(FLT_MAX) {}
-    Ray(Point o, Vector d) : o(o), dir(d), FaceID(0), invDir(Vector(0, 0, 0)), pix_x(0), pix_y(0), rayTmin(0.0), rayTmax(FLT_MAX) {}
-    Ray(Point o, Vector d, int FaceID, Vector invDir, int pix_x = 0, int pix_y = 0, float rayTmin = 0.0, float rayTmax = FLT_MAX)
-        : o(o), dir(d), FaceID(FaceID), invDir(invDir), pix_x(pix_x), pix_y(pix_y), rayTmin(rayTmin), rayTmax(rayTmax) {}
+    // para a Cat: foram adicionados valores min e max do ray - são necessários para delimitar o "campo de visão" 
+    // (sem eles, o programa percore uma direção infinita e não sabe "quando parar",
+    // e assim a imagem aparece toda preta, porque fica com problemas a renderizar)
+    float intersectionMin, intersectionMax;
+    // para a Cat: foram adicionados os parametros da class ray na construção
+    Ray() {}
+    Ray(Point o, Vector d) : o(o), dir(d), FaceID(0), invDir(Vector(0, 0, 0)), pix_x(0), pix_y(0), intersectionMin(0.0), intersectionMax(FLT_MAX) {}
+    Ray(Point o, Vector d, int FaceID, Vector invDir, int pix_x = 0, int pix_y = 0, float intersectionMin = 0.0, float intersectionMax = FLT_MAX)
+        : o(o), dir(d), FaceID(FaceID), invDir(invDir), pix_x(pix_x), pix_y(pix_y), intersectionMin(intersectionMin), intersectionMax(intersectionMax) {}
     ~Ray() {}
     void adjustOrigin (Vector normal) {
         Vector offset = EPSILON * normal;

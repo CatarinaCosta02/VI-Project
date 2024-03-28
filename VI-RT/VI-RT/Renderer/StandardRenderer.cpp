@@ -94,25 +94,25 @@ void StandardRenderer::Render() {
     // TESTE(s)
     std::cout<<std::endl;
     std::cout<< "******** Renderer/StandardRenderer.cpp ********" << std::endl;
-    if (NOTgeneratedRay == 0)
-        std::cout << "All ray vectores generated with success!" << std::endl;
-    else
-        std::cout<<"Numero generated rays ERROR : " << (NOTgeneratedRay) << std::endl;
+    if (NOTgeneratedRay != 0) {
+            float NOTgeneratedRay_100 = (static_cast<float>(NOTgeneratedRay) / (W * H)) * 100.0f;
+        std::cout<<"Numero generated rays ERROR : " << NOTgeneratedRay << " px" << " -> " << NOTgeneratedRay_100  << std::endl;
+    }
     if (numintersections == 0)
         std::cout << "Nenhuma interseção detetada!" << std::endl;
-    else
-        std::cout<<"Numero intersections (trace ray) : " << (numintersections) << std::endl;
-    std::cout<<"Numero nao intersections trace ray : " << (numIntersectionsNOT) << std::endl;
+    else {
+        float numintersections_100 = (static_cast<float>(numintersections) / (W * H)) * 100.0f;
+        std::cout << "Numero intersections (trace ray) : " << numintersections << " px" << " -> " << numintersections_100 << "%" << std::endl;
+    }
+    float numIntersectionsNOT_100 = (static_cast<float>(numIntersectionsNOT) / (W * H)) * 100.0f;
+    std::cout<<"Numero nao intersections trace ray : " << numIntersectionsNOT << " px" << " -> " << numIntersectionsNOT_100  << "%" << std::endl;
     std::cout<<std::endl;
-    std::cout<<"Numero pixels WHITE : " << (white) << " -> " << ((white/(W*H))*100) << "%" << std::endl;
-    std::cout<<"Numero pixels BLACK : " << (black) << " -> " << ((black/(W*H))*100) << "%"  << std::endl;
-    std::cout<<"Numero pixels OTHER : " << (other) << " -> " << ((other/(W*H))*100)  << "%" << std::endl;
+    float white_100 = (static_cast<float>(white) / (W * H)) * 100.0f;
+    float black_100 = (static_cast<float>(black) / (W * H)) * 100.0f;
+    float other_100 = (static_cast<float>(other) / (W * H)) * 100.0f;
+    std::cout<<"Numero pixels WHITE : " << white << " px" << " -> " << white_100 << "%" << std::endl;
+    std::cout<<"Numero pixels BLACK : " << black << " px" << " -> " << black_100 << "%"  << std::endl;
+    std::cout<<"Numero pixels OTHER : " << other << " px" << " -> " << other_100  << "%" << std::endl;
     std::cout<< "***********************************************" << std::endl;
     std::cout<<std::endl;
-
-    // o chat disse isto:
-    // Parece que sua imagem está sendo renderizada com a cor azul predominante. 
-    // Isso sugere que pode haver um problema na geração de raios (não é isto), na detecção de interseção (pode ser disto) ou na sombra deles.
-    
-    // *********************************************** CONTINUAR ***********************************************
 }
