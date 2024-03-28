@@ -75,7 +75,7 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     r->pix_y = y;
 
     // Retorna falso, indicando que não houve erro na geração do raio
-    return false;
+    return true;
 }
 
 

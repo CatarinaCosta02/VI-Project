@@ -20,6 +20,7 @@ void StandardRenderer::Render() {
     int white = 0;
     int black = 0;
     int other = 0;
+    int NOTgeneratedRay = 0;
     int numintersections = 0;
     int numIntersectionsNOT = 0;
     // main rendering loop: get primary rays from the camera until done
@@ -34,7 +35,9 @@ void StandardRenderer::Render() {
 
             // for (int ss = 0; ss < spp; ss++) {
                 // Generate Ray (camera)
-                perspCam->GenerateRay(x, y, &primary);
+                bool generatedRay = perspCam->GenerateRay(x, y, &primary);
+                if (!generatedRay)
+                    NOTgeneratedRay++;
 
 
                 // std::cout << "primary Ray (" << primary.pix_x << ", " << primary.pix_y << ")" << std::endl;
@@ -91,13 +94,19 @@ void StandardRenderer::Render() {
     // TESTE(s)
     std::cout<<std::endl;
     std::cout<< "******** Renderer/StandardRenderer.cpp ********" << std::endl;
-    // std::cout<<"Numero generated rays : " << (numGenerateRay) << std::endl;
-    std::cout<<"Numero intersections (trace ray) : " << (numintersections) << std::endl;
+    if (NOTgeneratedRay == 0)
+        std::cout << "All ray vectores generated with success!" << std::endl;
+    else
+        std::cout<<"Numero generated rays ERROR : " << (NOTgeneratedRay) << std::endl;
+    if (numintersections == 0)
+        std::cout << "Nenhuma interseção detetada!" << std::endl;
+    else
+        std::cout<<"Numero intersections (trace ray) : " << (numintersections) << std::endl;
     std::cout<<"Numero nao intersections trace ray : " << (numIntersectionsNOT) << std::endl;
     std::cout<<std::endl;
     std::cout<<"Numero pixels WHITE : " << (white) << " -> " << ((white/(W*H))*100) << "%" << std::endl;
     std::cout<<"Numero pixels BLACK : " << (black) << " -> " << ((black/(W*H))*100) << "%"  << std::endl;
-    std::cout<<"Numero pixels OTHER (neste caso blue) : " << (other) << " -> " << ((other/(W*H))*100)  << "%" << std::endl;
+    std::cout<<"Numero pixels OTHER : " << (other) << " -> " << ((other/(W*H))*100)  << "%" << std::endl;
     std::cout<< "***********************************************" << std::endl;
     std::cout<<std::endl;
 

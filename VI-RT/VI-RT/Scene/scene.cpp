@@ -78,112 +78,91 @@ bool Scene::Load(const std::string &fname)
     else
         std::cout << "Successfully loaded file: " << fname << std::endl;
 
+    std::cout << std::endl;
 
-    // get the materials
     const std::vector<tinyobj::material_t> materials = myObj.GetMaterials();
     for (auto it = materials.begin(); it != materials.end(); it++)
     {
-        // criação de um objeto Phong para cada material
         Phong *mat = new Phong;
 
-        // Ka
         mat->Ka.R = it->ambient[0];
         mat->Ka.G = it->ambient[1];
         mat->Ka.B = it->ambient[2];
 
-        // Kd (diffuse color)
         mat->Kd.R = it->diffuse[0];
         mat->Kd.G = it->diffuse[1];
         mat->Kd.B = it->diffuse[2];
 
-        // Ns (specular exponent/shininess)
         mat->Ns = it->shininess;
 
-        // Ks (specular color)
         mat->Ks.R = it->specular[0];
         mat->Ks.G = it->specular[1];
         mat->Ks.B = it->specular[2];
 
-        // Kt (transmission color)
         mat->Kt.R = it->transmittance[0];
         mat->Kt.G = it->transmittance[1];
         mat->Kt.B = it->transmittance[2];
 
-        // adicionar o material à lista de BRDFs, que é usada para modelar como a luz é refletida em superfícies
         this->BRDFs.push_back(mat);
         this->numBRDFs++;
     }
 
-    // ter acesso aos vértices e à mesh
     tinyobj::attrib_t attrib = myObj.GetAttrib();
-    
-    //const std::vector<tinyobj::shape_t> shapes = myObj.GetShapes();
-    // get the vertices
     const float *vtcs = attrib.vertices.data();
-
-    // access the shapes (each shape is one mesh)
     const std::vector<tinyobj::shape_t> shps = myObj.GetShapes();
-    // auto& shapes = myObj.GetShapes();
 
     for (size_t s = 0; s < shps.size(); s++) {
         Primitive *p = new Primitive;
         Mesh *m = new Mesh;
         p->g = m;
-        // assume all faces in the mesh have the same material
         p->material_ndx = shps[s].mesh.material_ids[0];
 
-        // the primitive's geometry bounding box is computed on the fly
-        // initially set BB.min and BB.max to be the first vertex
         const int V1st = shps[s].mesh.indices.begin()->vertex_index * 3;
         m->bb.min.set(vtcs[V1st], vtcs[V1st + 1], vtcs[V1st + 2]);
         m->bb.max.set(vtcs[V1st], vtcs[V1st + 1], vtcs[V1st + 2]);
 
-        
-        // estrutura rehash (não existia em nenhum lado do código)
         struct rehash{
             int objNdx;
             int ourNdx;
 
             bool operator<(const rehash &other) const{
-                // Define comparison logic here. For example:
                 return objNdx < other.objNdx;
             }
         };
 
-        // add faces and vertices
         std::set<rehash> vert_rehash;
-        int normCount=0;
+
         for (auto v_it = shps[s].mesh.indices.begin(); v_it != shps[s].mesh.indices.end();) {
             Face *f = new Face;
             Point myVtcs[3];
-            // process 3 vertices
+            
             for (int v = 0; v < 3; v++) {
                 const int objNdx = v_it->vertex_index;
                 myVtcs[v].set(vtcs[objNdx * 3], vtcs[objNdx * 3 + 1], vtcs[objNdx * 3 + 2]);
+                
                 if (v == 0) {
                     f->bb.min.set(myVtcs[0].X, myVtcs[0].Y, myVtcs[0].Z);
                     f->bb.max.set(myVtcs[0].X, myVtcs[0].Y, myVtcs[0].Z);
                 } else {
                     f->bb.update(myVtcs[v]);
                 }
+                
                 rehash new_vert={objNdx, 0};
                 auto known_vert = vert_rehash.find(new_vert);
-                if (known_vert == vert_rehash.end()) { // new vertice, add it to the mesh
+                
+                if (known_vert == vert_rehash.end()) { 
                     new_vert.ourNdx = m->numVertices;
                     vert_rehash.insert(new_vert);
                     m->vertices.push_back(myVtcs[v]);
                     m->numVertices++;
-                    
-                    // register in the face
                     f->vert_ndx[v] = new_vert.ourNdx;
                     m->bb.update(myVtcs[v]);
                 } else {
                     f->vert_ndx[v] = known_vert->ourNdx;
                 }
-                v_it++; // next vertice within this face (there are 3)
-            }           //    end vertices
+                v_it++;
+            }
 
-            // calculate the geometric normal
             Point v0 = m->vertices[f->vert_ndx[0]];
             Point v1 = m->vertices[f->vert_ndx[1]];
             Point v2 = m->vertices[f->vert_ndx[2]];
@@ -195,56 +174,52 @@ bool Scene::Load(const std::string &fname)
             normal.normalize();
             f->geoNormal.set(normal);
             f->FaceID = FaceID++;
-            // add face to mesh
+
             m->faces.push_back(*f);
             m->numFaces++;
-        } // end iterate vertices in the mesh (shape)
-        // add primitive to scene
+        }
+        
         prims.push_back(p);
         numPrimitives++;
-    } // end iterate over shapes    
+        
+        std::cout << "Mesh " << s << std::endl;
+        std::cout << "Number of Vertices: " << m->numVertices << std::endl;
+        std::cout << "Number of Faces: " << m->numFaces << std::endl;
+        std::cout << "Material Index: " << p->material_ndx << std::endl;
+        std::cout << "Bounding Box Min: (" << m->bb.min.X << ", " << m->bb.min.Y << ", " << m->bb.min.Z << ")" << std::endl;
+        std::cout << "Bounding Box Max: (" << m->bb.max.X << ", " << m->bb.max.Y << ", " << m->bb.max.Z << ")" << std::endl;
+        std::cout << std::endl;
+    }
 
     PrintInfo(myObj);  
     return true;
 }
 
 
-bool Scene::trace(Ray r, Intersection *isect)
-{
+
+bool Scene::trace (Ray r, Intersection *isect) {
     Intersection curr_isect;
-    bool intersection = false;
-
-    if (numPrimitives == 0)
-        return false;
-
-    int numERRO=0;
+    bool intersection = false;    
+    
+    if (numPrimitives==0) return false;
     
     // iterate over all primitives
-    for (auto prim_itr = prims.begin(); prim_itr != prims.end(); prim_itr++)
-    {
-        if ((*prim_itr)->g->intersect(r, &curr_isect)) // isto vai sempre retornar false por causa do method na class Geometry (acho que não é suposto mexer nisso...)
-        {
-            if (!intersection)
-            { // first intersection
+    for (auto prim_itr = prims.begin() ; prim_itr != prims.end() ; prim_itr++) {
+        if ((*prim_itr)->g->intersect(r, &curr_isect)) {
+
+            if (!intersection) { // first intersection
                 intersection = true;
                 *isect = curr_isect;
                 isect->f = BRDFs[(*prim_itr)->material_ndx];
             }
-            else if (curr_isect.depth < isect->depth)
-            {
+            else if (curr_isect.depth < isect->depth) {
                 *isect = curr_isect;
                 isect->f = BRDFs[(*prim_itr)->material_ndx];
             }
         }
-        else {
-            numERRO++;
-            // std::cout << "intersect return false!!" << std::endl;
-        }
     }
-
     return intersection;
 }
-
 
 
 // // TESTE

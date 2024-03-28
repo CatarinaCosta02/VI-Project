@@ -56,7 +56,7 @@ int main(int argc, const char * argv[]) {
     // Camera parameters
     // const Point Eye ={0,0,0}, At={0,0,1}; 
     // const Point Eye ={280,275,-330}, At={280,265,0};
-    const Point Eye ={0,125,-100}, At={0,125,0}; // debug
+    const Point Eye ={0,125,-200}, At={0,125,0}; // debug
     const Vector Up={0,1,0};
     const float fovW = 90.f;
     const float fovH = fovW * (float)H/(float)W;  // in degrees
