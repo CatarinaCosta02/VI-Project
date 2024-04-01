@@ -61,7 +61,6 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
 
     // Cria um vetor de direção usando as coordenadas NDC calculadas
     Vector dir = Vector(ndcX, ndcY, 1);
-
     
 
     // Transforma o vetor de direção do espaço da câmera para o espaço do mundo
@@ -76,21 +75,19 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     //enquanto a segunda forma (r->o = Eye; r->dir = dirWorld;) divide a 
     //atribuição em duas linhas separadas para maior clareza.
 
-    // dirWorld.normalize();
-
     *r = Ray(Eye, dirWorld); // Define o raio com origem na posição da câmera e direção transformada
     // r->o = Eye; // Define a origem do raio como a posição da câmera
     // r->dir = dirWorld; // Define a direção do raio como a direção transformada
     
-    // para a Cat: foi adicionada a inversa (serve para a bb)
-    Vector inv;
-    inv.X = 1/dirWorld.X;
-    inv.Y = 1/dirWorld.Y;
-    inv.Z = 1/dirWorld.Z;
-    r->invDir = inv;
+    // foi adicionada a inversa (serve para a bb)
+    // Vector inv;
+    // inv.X = 1/dirWorld.X;
+    // inv.Y = 1/dirWorld.Y;
+    // inv.Z = 1/dirWorld.Z;
+    // r->invDir = inv;
     
-    r->pix_x = x;
-    r->pix_y = y;
+    // r->pix_x = x;
+    // r->pix_y = y;
 
     return true;
 }

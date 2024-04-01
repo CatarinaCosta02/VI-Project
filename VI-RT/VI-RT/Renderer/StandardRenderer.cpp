@@ -31,12 +31,10 @@ void StandardRenderer::Render() {
             bool intersected;
             RGB color;
         
-
             // Generate Ray (camera)        
             bool generatedRay = perspCam->GenerateRay(x, y, &primary);
             if (!generatedRay)
                 NOTgeneratedRay++;
-                       
 
             
             // trace ray (scene)
@@ -45,11 +43,10 @@ void StandardRenderer::Render() {
                 numintersections++;
             else 
                 numIntersectionsNOT++;
+            
 
             // shade this intersection (shader) - remember: depth=0
             color = shd->shade(intersected, isect, 0);
-
-
             if (color.R == 255 && color.G == 255 && color.B == 255)
                 white++;
             else if (color.R == 0 && color.G == 0 && color.B == 0) 

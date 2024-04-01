@@ -17,6 +17,7 @@
 #include <set>
 #include <vector>
 #include "AreaLight.hpp"
+#include <algorithm> // Para std::reverse
 
 
 using namespace tinyobj;
@@ -182,15 +183,22 @@ bool Scene::Load(const std::string &fname)
         }
         
         prims.push_back(p);
+        //std::reverse(prims.begin(), prims.end());
         numPrimitives++;
+
         
-        std::cout << "Mesh " << s << " - " << p->object_name << std::endl;
-        std::cout << "Number of Vertices: " << m->numVertices << std::endl;
-        std::cout << "Number of Faces: " << m->numFaces << std::endl;
-        std::cout << "Material Name: " << p->material_name << " (index: " << p->material_ndx << ")" << std::endl;
-        std::cout << "Bounding Box Min: (" << m->bb.min.X << ", " << m->bb.min.Y << ", " << m->bb.min.Z << ")" << std::endl;
-        std::cout << "Bounding Box Max: (" << m->bb.max.X << ", " << m->bb.max.Y << ", " << m->bb.max.Z << ")" << std::endl;
-        std::cout << std::endl;
+    }
+    std::iter_swap(prims.begin() + 1, prims.begin() + 2);
+    std::reverse(prims.begin(), prims.end());
+
+    for (auto prim_itr = prims.begin() ; prim_itr != prims.end() ; prim_itr++) {
+        std::cout << "Primitiva - " << (*prim_itr)->object_name << std::endl;
+        // std::cout << "Number of Vertices: " << m->numVertices << std::endl;
+        // std::cout << "Number of Faces: " << m->numFaces << std::endl;
+        std::cout << "Material name: " << (*prim_itr)->material_name << " (index: " << (*prim_itr)->material_ndx << ")" << std::endl;
+        // std::cout << "Bounding Box Min: (" << m->bb.min.X << ", " << m->bb.min.Y << ", " << m->bb.min.Z << ")" << std::endl;
+        // std::cout << "Bounding Box Max: (" << m->bb.max.X << ", " << m->bb.max.Y << ", " << m->bb.max.Z << ")" << std::endl;
+        std::cout << std::endl;   
     }
 
     PrintInfo(myObj);  
@@ -203,12 +211,12 @@ bool Scene::trace (Ray r, Intersection *isect) {
     Intersection curr_isect;
     bool intersection = false;    
     
-    if (numPrimitives==0) return false;
+    if (numPrimitives==0) 
+        return false;
     
     // iterate over all primitives
     for (auto prim_itr = prims.begin() ; prim_itr != prims.end() ; prim_itr++) {
         if ((*prim_itr)->g->intersect(r, &curr_isect)) {
-
             if (!intersection) { // first intersection
                 intersection = true;
                 *isect = curr_isect;

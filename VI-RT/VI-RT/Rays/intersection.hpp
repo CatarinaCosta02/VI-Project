@@ -1,17 +1,10 @@
-//
-//  Intersection.hpp
-//  VI-RT
-//
-//  Created by Luis Paulo Santos on 30/01/2023.
-//
-
 #ifndef Intersection_hpp
 #define Intersection_hpp
 
 #include "vector.hpp"
 #include "BRDF.hpp"
 
-typedef struct Intersection {
+class Intersection {
 public:
     Point p;
     Vector gn;  // geometric normal
@@ -24,11 +17,11 @@ public:
     bool isLight;  // for intersections with light sources
     RGB Le;         // for intersections with light sources
     
-    
-    Intersection() {}
-    // from pbrt book, section 2.10, pag 116
-    Intersection(const Point &p, const Vector &n, const Vector &wo, const float &depth)
-    : p(p), gn(n), sn(n), wo(wo), depth(depth), f(nullptr) { }
-} Intersection;
+    // Constructor with initialization
+    Intersection(const Point& p, const Vector& n, const Vector& wo, float depth, BRDF* f, int pix_x, int pix_y, int FaceID, bool isLight, const RGB& Le)
+        : p(p), gn(n), sn(n), wo(wo), depth(depth), f(f), pix_x(pix_x), pix_y(pix_y), FaceID(FaceID), isLight(isLight), Le(Le) {}
 
+    // Default constructor
+    Intersection() : f(nullptr) {}
+};
 #endif /* Intersection_hpp */
