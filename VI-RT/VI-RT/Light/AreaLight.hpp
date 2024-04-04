@@ -33,9 +33,9 @@ public:
     float u = r[0];
     float v = r[1];
     
-    // Amostrar um ponto aleatório dentro do triângulo usando coordenadas baricêntricas
-    // Aqui, estamos usando coordenadas baricêntricas para amostrar um ponto aleatório dentro do triângulo.
-    // Isso nos permite amostrar pontos uniformemente distribuídos dentro do triângulo.
+    // Mostrar um ponto aleatório dentro do triângulo usando coordenadas baricêntricas
+    // Aqui, estamos a usar coordenadas baricêntricas para mostrar um ponto aleatório dentro do triângulo.
+    // Isto permite amostrar pontos uniformemente distribuídos dentro do triângulo.
     float sqrt_u = sqrt(u);
     float alpha = 1.0f - sqrt_u;
     float beta = (1.0f - v) * sqrt_u;
@@ -49,12 +49,12 @@ public:
     p->Z = alpha * gem->v1.Z + beta * gem->v2.Z + gamma * gem->v3.Z;
 
     // Calcula a densidade de probabilidade de amostragem no ponto de amostragem
-    // Aqui, estamos atribuindo a densidade de probabilidade de amostragem ao parâmetro _pdf.
+    // Aqui, estamos a atribuir a densidade de probabilidade de amostragem ao parâmetro _pdf.
     // Geralmente, isso é apenas um valor constante que representa a densidade de probabilidade uniforme dentro do triângulo.
     _pdf = pdf;
 
     // Retorna a intensidade da luz no ponto de amostragem
-    // Aqui, estamos retornando a intensidade da luz no ponto de amostragem.
+    // Aqui, estamos a retornar a intensidade da luz no ponto de amostragem.
     // Isso geralmente é constante para luzes de área, então não muda com a posição de amostragem dentro do triângulo.
     return intensity;
 }

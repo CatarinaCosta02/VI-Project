@@ -23,6 +23,7 @@ void StandardRenderer::Render() {
     int NOTgeneratedRay = 0;
     int numintersections = 0;
     int numIntersectionsNOT = 0;
+    //float cam_jitter[2] = {0.0f, 0.0f};
     // main rendering loop: get primary rays from the camera until done
     for (y=0 ; y< H ; y++) {  // loop over rows
         for (x=0 ; x< W ; x++) { // loop over columns

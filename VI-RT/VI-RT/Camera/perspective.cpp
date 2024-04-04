@@ -40,14 +40,14 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     float ndcY;  // Variável para armazenar a coordenada y normalizada do dispositivo (NDC)
 
 
-    // float jitter[2];
-    // cam_jitter[0] = (rand() % 2 + 1) - 1;
-    // cam_jitter[1] = (rand() % 2 + 1) - 1;
+    //float jitter[2];
+    //cam_jitter[0] = (rand() % 2 + 1) - 1;
+    //cam_jitter[1] = (rand() % 2 + 1) - 1;
 
     // Reduzir artefatos de aliasing, como serrilhados ou "dentes de serra"
     // especialmente em bordas diagonais ou linhas finas. 
     // O jitter é uma forma de introduzir uma pequena quantidade de aleatoriedade nas 
-    // coordenadas dos pixels ou dos raios de luz, a fim de distribuir melhor a amostragem ao longo dessas bordas.
+    // coordenadas dos pixels ou dos raios de luz, a fim de distribuir melhor a amostra ao longo dessas bordas.
     // Verifica se foi aplicado jitter à câmera
     if (cam_jitter == NULL) {
         // Se não houver jitter, calcula as coordenadas NDC sem alterações
@@ -55,8 +55,8 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
         ndcY = (2.0f * (y + 0.5f) / H) - 1.0f;
     } else {
         // Se houver jitter, calcula as coordenadas NDC com base no jitter aplicado
-        ndcX = 2.f * ((float)x + cam_jitter[0]) / W - 1.f;
-        ndcY = 2.f * ((float)y + cam_jitter[1]) / H - 1.f;
+        ndcX = (2.0f * (x + cam_jitter[0] + 0.5f) / W) - 1.0f;
+        ndcY = (2.0f * (y + cam_jitter[1] + 0.5f) / H) - 1.0f;
     }
 
     // Cria um vetor de direção usando as coordenadas NDC calculadas
@@ -86,8 +86,8 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     // inv.Z = 1/dirWorld.Z;
     // r->invDir = inv;
     
-    // r->pix_x = x;
-    // r->pix_y = y;
+    r->pix_x = x;
+    r->pix_y = y;
 
     return true;
 }

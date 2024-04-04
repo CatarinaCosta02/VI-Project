@@ -43,7 +43,7 @@ public:
         // if (r.pix_x == 320 && r.pix_y == 240) {
             // std::cout << "Ray: " << r.pix_x << " " << r.pix_y << std::endl;
         // }
-        // primerio calcular os valores inversos das componentes do raio
+        // primeiro calcular os valores inversos das componentes do raio
         // calcular os valores de tmin e tmax
         float tminX = (min.X - r.o.X) * r.invDir.X;
         float tmaxX = (max.X - r.o.X) * r.invDir.X;
