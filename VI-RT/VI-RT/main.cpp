@@ -31,11 +31,11 @@ int main(int argc, const char * argv[]) {
     double cpu_time_used;
     
     // add an ambient light to the scene
-    AmbientLight ambient(RGB(0.9f,0.9f,0.9f));
-    scene.lights.push_back(&ambient);
-    scene.numLights++;
+    // AmbientLight ambient(RGB(0.9f,0.9f,0.9f));
+    // scene.lights.push_back(&ambient);
+    // scene.numLights++;
 
-    success = scene.Load("./VI-RT/Scene/tinyobjloader/models/cornell_box.obj");
+    success = scene.Load("./VI-RT/Scene/tinyobjloader/models/cornell_box_VI.obj");
     // success = scene.Load("./VI-RT/Scene/tinyobjloader/models/debug.txt");
     
     if (!success) {
@@ -67,8 +67,20 @@ int main(int argc, const char * argv[]) {
     std::cout << std::endl;
     
     // create the shader
-    RGB background(0.5, 0.05, 0.5); // roxo
-    shd = new AmbientShader(&scene, background);
+    // RGB background(0.5, 0.05, 0.5); // roxo
+    // shd = new AmbientShader(&scene, background);
+
+// add an ambient light to the scene
+    AmbientLight *ambient = new AmbientLight(RGB(0.05,0.05,0.05));
+    scene.lights.push_back(ambient);
+    scene.numLights++;
+
+// add a point light to the scene
+    PointLight *pl1 = new PointLight(RGB(0.65,0.65,0.65), Point(288,508,282));
+    scene.lights.push_back(pl1);
+    scene.numLights++;
+
+    
     // declare the renderer
     // int spp=64;
     int spp=1;     // samples per pixel

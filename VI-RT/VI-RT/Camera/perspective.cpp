@@ -40,10 +40,6 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     float ndcY;  // Variável para armazenar a coordenada y normalizada do dispositivo (NDC)
 
 
-    // float jitter[2];
-    // cam_jitter[0] = (rand() % 2 + 1) - 1;
-    // cam_jitter[1] = (rand() % 2 + 1) - 1;
-
     // Reduzir artefatos de aliasing, como serrilhados ou "dentes de serra"
     // especialmente em bordas diagonais ou linhas finas. 
     // O jitter é uma forma de introduzir uma pequena quantidade de aleatoriedade nas 

@@ -188,6 +188,8 @@ bool Scene::Load(const std::string &fname)
 
         
     }
+
+    // Trocar order das primitivas da lista prims
     std::iter_swap(prims.begin() + 1, prims.begin() + 2);
     std::reverse(prims.begin(), prims.end());
 
