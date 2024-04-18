@@ -67,18 +67,18 @@ int main(int argc, const char * argv[]) {
     std::cout << std::endl;
     
     // create the shader
-    // RGB background(0.5, 0.05, 0.5); // roxo
+    RGB background(0.5, 0.05, 0.5); // roxo
     // shd = new AmbientShader(&scene, background);
 
-// add an ambient light to the scene
+    // add an ambient light to the scene
     AmbientLight *ambient = new AmbientLight(RGB(0.05,0.05,0.05));
     scene.lights.push_back(ambient);
     scene.numLights++;
 
-// add a point light to the scene
+    // add a point light to the scene
     PointLight *pl1 = new PointLight(RGB(0.65,0.65,0.65), Point(288,508,282));
     scene.lights.push_back(pl1);
-    scene.numLights++;
+    scene.numLights++;    
 
     
     // declare the renderer

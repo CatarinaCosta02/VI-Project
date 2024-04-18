@@ -46,7 +46,7 @@ clean:
 	-@rm -rvf $(OBJ_DIR)/*
 	-@rm -rvf $(APP_DIR)/*
 
-##########################################N NÃO APAGAR, É PARA O FERNAS CORRER ###########################################
+# ##########################################N NÃO APAGAR, É PARA O FERNAS CORRER ###########################################
 # CXX      := g++ 
 # CXXFLAGS := -std=c++11 -O3
 # LDFLAGS  := 
