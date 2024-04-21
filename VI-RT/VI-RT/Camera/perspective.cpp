@@ -36,9 +36,8 @@ Perspective::Perspective(Point Eye, const Point At, Vector Up, const int W, cons
 
 // Implementação do método GenerateRay da classe Perspective
 bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam_jitter) {
-    float ndcX;  // Variável para armazenar a coordenada x normalizada do dispositivo (NDC)
-    float ndcY;  // Variável para armazenar a coordenada y normalizada do dispositivo (NDC)
-
+    float xc;  // Variável para armazenar a coordenada x normalizada do dispositivo (NDC)
+    float yc;  // Variável para armazenar a coordenada y normalizada do dispositivo (NDC)
 
     // Reduzir artefatos de aliasing, como serrilhados ou "dentes de serra"
     // especialmente em bordas diagonais ou linhas finas. 
@@ -47,16 +46,16 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     // Verifica se foi aplicado jitter à câmera
     if (cam_jitter == NULL) {
         // Se não houver jitter, calcula as coordenadas NDC sem alterações
-        ndcX = (2.0f * (x + 0.5f) / W) - 1.0f;
-        ndcY = (2.0f * (y + 0.5f) / H) - 1.0f;
+        xc = 2.f * ((float)x + .5f)/W - 1.f;
+        yc = 2.f * ((float)y + .5f)/W - 1.f;
     } else {
         // Se houver jitter, calcula as coordenadas NDC com base no jitter aplicado
-        ndcX = 2.f * ((float)x + cam_jitter[0]) / W - 1.f;
-        ndcY = 2.f * ((float)y + cam_jitter[1]) / H - 1.f;
+        xc = 2.f * ((float)x + cam_jitter[0]) / W - 1.f;
+        yc = 2.f * ((float)(H-y-1) + cam_jitter[1])/H - 1.f;
     }
 
     // Cria um vetor de direção usando as coordenadas NDC calculadas
-    Vector dir = Vector(ndcX, ndcY, 1);
+    Vector dir = Vector(xc, yc, 1);
     
 
     // Transforma o vetor de direção do espaço da câmera para o espaço do mundo
@@ -76,14 +75,14 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
     // r->dir = dirWorld; // Define a direção do raio como a direção transformada
     
     // foi adicionada a inversa (serve para a bb)
-    // Vector inv;
-    // inv.X = 1/dirWorld.X;
-    // inv.Y = 1/dirWorld.Y;
-    // inv.Z = 1/dirWorld.Z;
-    // r->invDir = inv;
+    Vector inv;
+    inv.X = 1/dirWorld.X;
+    inv.Y = 1/dirWorld.Y;
+    inv.Z = 1/dirWorld.Z;
+    r->invDir = inv;
     
-    // r->pix_x = x;
-    // r->pix_y = y;
+    r->pix_x = x;
+    r->pix_y = y;
 
     return true;
 }

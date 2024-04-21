@@ -23,6 +23,8 @@ void StandardRenderer::Render() {
     int NOTgeneratedRay = 0;
     int numintersections = 0;
     int numIntersectionsNOT = 0;
+    const bool jitter = false; // Mudar para true
+
     // main rendering loop: get primary rays from the camera until done
     for (y=0 ; y< H ; y++) {  // loop over rows
         for (x=0 ; x< W ; x++) { // loop over columns
@@ -30,30 +32,40 @@ void StandardRenderer::Render() {
             Intersection isect;
             bool intersected;
             RGB color;
-        
-            // Generate Ray (camera)        
-            bool generatedRay = perspCam->GenerateRay(x, y, &primary);
-            if (!generatedRay)
-                NOTgeneratedRay++;
-
+            for (int ss=0; ss<spp; ss++) {
             
-            // trace ray (scene)
-            intersected = scene->trace(primary, &isect);
-            if (intersected == true)
-                numintersections++;
-            else 
-                numIntersectionsNOT++;
-            
-
-            // shade this intersection (shader) - remember: depth=0
-            color = shd->shade(intersected, isect, 0);
-            if (color.R == 255 && color.G == 255 && color.B == 255)
-                white++;
-            else if (color.R == 0 && color.G == 0 && color.B == 0) 
-                black++;
-            else 
-                other++;
+                if (jitter) {
                 
+                    float jitterV[2];
+                    jitterV[0] = ((float)rand())/((float)RAND_MAX);
+                    jitterV[1] = ((float)rand())/((float)RAND_MAX);
+
+                    // Generate Ray (camera)        
+                    bool generatedRay = perspCam->GenerateRay(x, y, &primary, jitterV);
+
+                } else {
+                    bool generatedRay = perspCam->GenerateRay(x, y, &primary);
+                }
+
+                // trace ray (scene)
+                intersected = scene->trace(primary, &isect);
+                if (intersected == true)
+                    numintersections++;
+                else 
+                    numIntersectionsNOT++;
+                
+
+                // shade this intersection (shader) - remember: depth=0
+                color = shd->shade(intersected, isect, 0);
+                if (color.R == 255 && color.G == 255 && color.B == 255)
+                    white++;
+                else if (color.R == 0 && color.G == 0 && color.B == 0) 
+                    black++;
+                else 
+                    other++;
+                    
+            }
+            color = color/spp;                
             // write the result into the image frame buffer (image)
             img->set(x,y,color);
         } // loop over columns

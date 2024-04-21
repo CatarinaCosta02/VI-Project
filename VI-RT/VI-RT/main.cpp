@@ -30,11 +30,6 @@ int main(int argc, const char * argv[]) {
     clock_t start, end;
     double cpu_time_used;
     
-    // add an ambient light to the scene
-    // AmbientLight ambient(RGB(0.9f,0.9f,0.9f));
-    // scene.lights.push_back(&ambient);
-    // scene.numLights++;
-
     success = scene.Load("./VI-RT/Scene/tinyobjloader/models/cornell_box_VI.obj");
     // success = scene.Load("./VI-RT/Scene/tinyobjloader/models/debug.txt");
     
@@ -44,6 +39,30 @@ int main(int argc, const char * argv[]) {
     }
     std::cout << std::endl;
     std::cout << "Scene Load: SUCCESS!! :-)\n";
+
+
+
+    // // add an ambient light to the scene
+    // AmbientLight ambient(RGB(0.9f,0.9f,0.9f));
+    // scene.lights.push_back(&ambient);
+    // scene.numLights++;
+
+    // create the shader
+    RGB background(0.5, 0.05, 0.5); // roxo
+    shd = new AmbientShader(&scene, background);
+
+    // add an ambient light to the scene
+    // AmbientLight *ambient = new AmbientLight(RGB(0.05,0.05,0.05));
+    AmbientLight *ambient = new AmbientLight(RGB(0.9f,0.9f,0.9f));
+    scene.lights.push_back(ambient);
+    scene.numLights++;
+
+    // add a point light to the scene
+    PointLight *pl1 = new PointLight(RGB(0.65,0.65,0.65), Point(288,508,282));
+    scene.lights.push_back(pl1);
+    scene.numLights++;
+
+
     scene.printSummary();
     std::cout << std::endl;
         
@@ -54,9 +73,7 @@ int main(int argc, const char * argv[]) {
     img = new ImagePPM(W,H);
     
     // Camera parameters
-    // const Point Eye ={0,0,0}, At={0,0,1}; 
     const Point Eye ={280,275,-330}, At={280,265,0};
-    // const Point Eye ={0,125,-100}, At={0,125,0}; // debug
     const Vector Up={0,-1,0};
     const float fovW = 90.f;
     const float fovH = fovW * (float)H/(float)W;  // in degrees
@@ -66,20 +83,6 @@ int main(int argc, const char * argv[]) {
     cam->Information();
     std::cout << std::endl;
     
-    // create the shader
-    RGB background(0.5, 0.05, 0.5); // roxo
-    // shd = new AmbientShader(&scene, background);
-
-    // add an ambient light to the scene
-    AmbientLight *ambient = new AmbientLight(RGB(0.05,0.05,0.05));
-    scene.lights.push_back(ambient);
-    scene.numLights++;
-
-    // add a point light to the scene
-    PointLight *pl1 = new PointLight(RGB(0.65,0.65,0.65), Point(288,508,282));
-    scene.lights.push_back(pl1);
-    scene.numLights++;    
-
     
     // declare the renderer
     // int spp=64;
