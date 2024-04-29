@@ -21,6 +21,7 @@ RGB WhittedShader::directLighting (Intersection isect, Phong *f) {
         }
         if ((*l)->type == POINT_LIGHT) {  // is it a point light ?
             if (!f->Kd.isZero()) {
+                // std::cout << "Point light\n" << std::endl;
                 Point lpoint;
                 // get the position and radiance of the light source
                 RGB L = (*l)->Sample_L(NULL, &lpoint);
@@ -48,7 +49,8 @@ RGB WhittedShader::directLighting (Intersection isect, Phong *f) {
 }
 
 RGB WhittedShader::specularReflection (Intersection isect, Phong *f, int depth) {
-    
+    // RGB color(0.,0.,0.);
+
     // generate the specular ray
     float cos = isect.gn.dot(isect.wo);
     Vector Rdir = 2.f * cos * isect.gn - isect.wo;

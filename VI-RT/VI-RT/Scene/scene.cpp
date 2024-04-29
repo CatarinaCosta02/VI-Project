@@ -227,6 +227,27 @@ bool Scene::trace (Ray r, Intersection *isect) {
             }
         }
     }
+    isect->isLight = false;
+
+    // now iterate over light sources and intersect with those that have geometry
+    for (auto l = lights.begin() ; l != lights.end() ; l++) {
+        if ((*l)->type == AREA_LIGHT) {
+            AreaLight *al = (AreaLight *)(*l);
+            if (al->gem->intersect(r, &curr_isect)) {
+                if (!intersection) { // first intersection
+                    intersection = true;
+                    *isect = curr_isect;
+                    isect->isLight = true;
+                    isect->Le = al->L();
+                }
+                else if (curr_isect.depth < isect->depth) {
+                    *isect = curr_isect;
+                    isect->isLight = true;
+                    isect->Le = al->L();
+                }
+            }
+        }
+    }
     return intersection;
 }
 
@@ -241,9 +262,9 @@ bool Scene::visibility(Ray s, const float maxL)
         return true;
 
     // iterate over all primitives while visible
-    for (auto prim_itr = prims.begin(); prim_itr != prims.end() && visible; prim_itr++)
+    for (auto p = prims.begin(); p != prims.end() && visible; p++)
     {
-        if ((*prim_itr)->g->intersect(s, &curr_isect))
+        if ((*p)->g->intersect(s, &curr_isect))
         {
             if (curr_isect.depth < maxL)
             {

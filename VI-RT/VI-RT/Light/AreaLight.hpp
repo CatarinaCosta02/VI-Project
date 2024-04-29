@@ -17,7 +17,8 @@ public:
     RGB intensity, power;
     Triangle *gem;
     float pdf;
-    AreaLight (RGB _power, Point _v1, Point _v2, Point _v3, Vector _n): power(_power) {
+    AreaLight (RGB _power, Point _v1, 
+    Point _v2, Point _v3, Vector _n): power(_power) {
         type = AREA_LIGHT;
         gem = new Triangle (_v1, _v2, _v3, _n);
         pdf = 1.f/gem->area();  // for uniform sampling over the area
@@ -36,10 +37,10 @@ public:
     // Amostrar um ponto aleatório dentro do triângulo usando coordenadas baricêntricas
     // Aqui, estamos usando coordenadas baricêntricas para amostrar um ponto aleatório dentro do triângulo.
     // Isso nos permite amostrar pontos uniformemente distribuídos dentro do triângulo.
-    float sqrt_u = sqrt(u);
-    float alpha = 1.0f - sqrt_u;
-    float beta = (1.0f - v) * sqrt_u;
-    float gamma = v * sqrt_u;
+    const float sqrt_u = sqrt(u);
+    const float alpha = 1.f - sqrt_u;
+    const float beta = (1.f - v) * sqrt_u;
+    const float gamma = v * sqrt_u;
 
     // Calcula o ponto de amostragem dentro do triângulo
     // Usamos as coordenadas baricêntricas para interpolar os vértices do triângulo

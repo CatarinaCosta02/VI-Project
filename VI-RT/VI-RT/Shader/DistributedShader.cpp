@@ -22,60 +22,62 @@ RGB DistributedShader::directLighting (Intersection isect, Phong *f) {
     Light *l;
 
     for (auto l_iter=scene->lights.begin() ; l_iter != scene->lights.end() ; l_iter++) {
-        RGB this_l_color (0.,0.,0.);
         l = (Light *) (*l_iter);
                 
-        if (l->type == AMBIENT_LIGHT) {  // is it an ambient light ?
-            if (!f->Ka.isZero()) {
-                RGB Ka = f->Ka;
-                this_l_color = Ka * l->L();
-            }
+        if (l->type == AMBIENT_LIGHT && !f->Ka.isZero()) {
+            color += f->Ka * l->L();
         }
-        if (l->type == POINT_LIGHT) {  // is it a point light ?
-            if (!f->Kd.isZero()) {
-                RGB L, Kd = f->Kd;
-                Point lpoint;
-                
-                // get the position and radiance of the light source
-                L = l->Sample_L(NULL, &lpoint);
-                
-                // compute the direction from the intersection point to the light source
-                Vector Ldir = isect.p.vec2point(lpoint);
-                const float Ldistance = Ldir.norm();
-                
-                // now normalize Ldir
-                Ldir.normalize();
-                
-                // compute the cosine between Ldir  and the shading normal at the intersection point
-                float cosL = Ldir.dot(isect.sn);
-                
-                // shade
-                if (cosL>0.)  { // the light is NOT behind the porimitive
-                    // generate the shadow ray
-                    Ray shadow(isect.p, Ldir);
-                    
-                    shadow.pix_x = isect.pix_x;
-                    shadow.pix_y = isect.pix_y;
-                    
-                    shadow.FaceID = isect.FaceID;
-                    
-                    // adjust origin by an EPSILON along the normal to avoid self occlusion at the origin
-                    shadow.adjustOrigin(isect.gn);
-                    
-                    if (scene->visibility(shadow, Ldistance-EPSILON)) {  // if light source not occluded
-                        this_l_color = Kd * L * cosL;
-                    }
-                } // end cosL > 0.
-            }
-        }
-        if (l->type == AREA_LIGHT) {  // is it an area light ?
-            
-            // ...
-            
-        }  // end area light
-        
-        color += this_l_color;
 
+        if (l->type == POINT_LIGHT && !f->Kd.isZero()) {
+            RGB L;
+            Point lpoint;
+            L = l->Sample_L(NULL, &lpoint);
+            Vector Ldir = isect.p.vec2point(lpoint);
+            const float Ldistance = Ldir.norm();
+            Ldir.normalize();
+            float cosL = Ldir.dot(isect.sn);
+
+            if (cosL > 0.) {
+                Ray shadow(isect.p, Ldir);
+                shadow.pix_x = isect.pix_x;
+                shadow.pix_y = isect.pix_y;
+                shadow.FaceID = isect.FaceID;
+                shadow.adjustOrigin(isect.gn);
+
+                if (scene->visibility(shadow, Ldistance-EPSILON)) {
+                    color += f->Kd * L * cosL;
+                }
+            }
+        }
+
+        if (l->type == AREA_LIGHT && !f->Kd.isZero()) {
+            RGB L;
+            Point lpoint;
+            float l_pdf;
+            AreaLight *al = (AreaLight *)l;
+
+            float rnd[2] = {((float)rand()) / ((float)RAND_MAX), ((float)rand()) / ((float)RAND_MAX)};
+            L = al->Sample_L(rnd, &lpoint, l_pdf);
+
+            Vector Ldir = isect.p.vec2point(lpoint);
+            const float Ldistance = Ldir.norm();
+            Ldir.normalize();
+
+            float cosL = Ldir.dot(isect.sn);
+            float cosL_LA = Ldir.dot(al->gem->normal);
+
+            if (cosL > 0. && cosL_LA <= 0.) {
+                Ray shadow(isect.p, Ldir);
+                shadow.pix_x = isect.pix_x;
+                shadow.pix_y = isect.pix_y;
+                shadow.FaceID = isect.FaceID;
+                shadow.adjustOrigin(isect.gn);
+
+                if (scene->visibility(shadow, Ldistance-EPSILON)) {
+                    color += (f->Kd * L * cosL) / l_pdf;
+                }
+            } 
+        }
     } // for loop
     return color;
 }

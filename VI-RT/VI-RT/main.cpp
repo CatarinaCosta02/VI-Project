@@ -49,16 +49,17 @@ int main(int argc, const char * argv[]) {
 
     // create the shader
     RGB background(0.5, 0.05, 0.5); // roxo
-    shd = new AmbientShader(&scene, background);
+    shd = new WhittedShader(&scene, background);
 
     // add an ambient light to the scene
     // AmbientLight *ambient = new AmbientLight(RGB(0.05,0.05,0.05));
-    AmbientLight *ambient = new AmbientLight(RGB(0.9f,0.9f,0.9f));
+    AmbientLight *ambient = new AmbientLight(RGB(0.5f,0.5f,0.5f));
     scene.lights.push_back(ambient);
     scene.numLights++;
 
     // add a point light to the scene
-    PointLight *pl1 = new PointLight(RGB(0.65,0.65,0.65), Point(288,508,282));
+    PointLight *pl1 = new PointLight(RGB(0.65,0.65,0.65), 
+    Point(288,508,282));
     scene.lights.push_back(pl1);
     scene.numLights++;
 
