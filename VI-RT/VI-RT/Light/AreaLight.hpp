@@ -30,17 +30,14 @@ public:
     RGB L () {return power;}
     // return a point p, RGB radiance and pdf given a pair of random number in [0..[
     RGB Sample_L(float *r, Point *p, float &_pdf) {
-    // Gere duas amostras aleatórias na faixa [0, 1]
-    float u = r[0];
-    float v = r[1];
     
     // Amostrar um ponto aleatório dentro do triângulo usando coordenadas baricêntricas
     // Aqui, estamos usando coordenadas baricêntricas para amostrar um ponto aleatório dentro do triângulo.
     // Isso nos permite amostrar pontos uniformemente distribuídos dentro do triângulo.
-    const float sqrt_u = sqrt(u);
-    const float alpha = 1.f - sqrt_u;
-    const float beta = (1.f - v) * sqrt_u;
-    const float gamma = v * sqrt_u;
+    const float sqrt_r0 = sqrtf(r[0]);
+    const float alpha = 1.f - sqrt_r0;
+    const float beta = (1.f-r[1]) * sqrt_r0;
+    const float gamma = r[1] * sqrt_r0;
 
     // Calcula o ponto de amostragem dentro do triângulo
     // Usamos as coordenadas baricêntricas para interpolar os vértices do triângulo
@@ -58,7 +55,7 @@ public:
     // Aqui, estamos retornando a intensidade da luz no ponto de amostragem.
     // Isso geralmente é constante para luzes de área, então não muda com a posição de amostragem dentro do triângulo.
     return intensity;
-}
+    }
 
 };
 

@@ -16,8 +16,11 @@ RGB WhittedShader::directLighting (Intersection isect, Phong *f) {
     for (auto l = scene->lights.begin() ; l != scene->lights.end() ; l++) {
         
         if ((*l)->type == AMBIENT_LIGHT) {  // is it an ambient light ?
-           if (!f->Ka.isZero()) color += f->Ka * (*l)->L();
-            continue;
+            if (!f->Ka.isZero()) {
+            RGB Ka = f->Ka;
+            color += Ka * (*l)->L();
+           }
+           continue;
         }
         if ((*l)->type == POINT_LIGHT) {  // is it a point light ?
             if (!f->Kd.isZero()) {
@@ -42,7 +45,7 @@ RGB WhittedShader::directLighting (Intersection isect, Phong *f) {
                         color += f->Kd * L * cosL;
                     } // end cosL > 0.
             }
-            continue;
+            // continue;
         }
     }
     return color;
@@ -72,9 +75,9 @@ RGB WhittedShader::shade(bool intersected, Intersection isect, int depth) {
     if (!intersected) {
         return (background);
     }
-    if (isect.isLight) { // intersection with a light source
-        return isect.Le;
-    }
+    //if (isect.isLight) { // intersection with a light source
+    //    return isect.Le;
+    //}
 
     // get the BRDF
     Phong *f = (Phong *)isect.f;

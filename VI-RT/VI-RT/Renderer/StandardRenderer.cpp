@@ -23,7 +23,7 @@ void StandardRenderer::Render() {
     int NOTgeneratedRay = 0;
     int numintersections = 0;
     int numIntersectionsNOT = 0;
-    const bool jitter = false; // Mudar para true
+    const bool jitter = true; // Mudar para true
 
     // main rendering loop: get primary rays from the camera until done
     for (y=0 ; y< H ; y++) {  // loop over rows
@@ -65,7 +65,7 @@ void StandardRenderer::Render() {
                     other++;
                     
             }
-            color = color/spp;                
+            color = color/float(spp);                
             // write the result into the image frame buffer (image)
             img->set(x,y,color);
         } // loop over columns
