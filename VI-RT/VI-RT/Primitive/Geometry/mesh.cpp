@@ -17,6 +17,8 @@
 
 bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
 
+    if(!f.bb.intersect(r))
+        return false;
     // n * (p - p0) = 0, onde n é a normal da face, p é um ponto na face e p0 é um ponto na face
     // n = (v1 - v0) x (v2 - v0)
     // acessar os vertices da face
@@ -36,7 +38,7 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
         return false;
 
     float inv_det = 1.0f / a;
-    Vector s(r.o.X - p0.X, r.o.Y - p0.Y, r.o.Z - p0.Z);
+    Vector s = Vector(r.o.X - p0.X, r.o.Y - p0.Y, r.o.Z - p0.Z);
     float u = inv_det * s.dot(h);
 
     // The coefficients must be non-negative and sum to 1, 
@@ -55,13 +57,14 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
     if (t > 0.00001f) // ray intersection
     {
         // out_intersection_point = ray_origin + ray_vector * t;
-        Point intersection_point = r.o + r.dir * t;
+        //Point intersection_point = r.o + r.dir * t;
 
+        Point intersection_point = Point(r.o.X + r.dir.X * t, r.o.Y + r.dir.Y * t, r.o.Z + r.dir.Z * t);
         // mandar informações para o isect
         isect->p = intersection_point;
         isect->gn = f.geoNormal;
         isect->sn = f.geoNormal;
-        Vector wo = r.dir * -1.0f;
+        Vector wo = Vector(-r.dir.X, -r.dir.Y, -r.dir.Z);
        // make sure the normal (gn and sn) points to the same side of the surface as w
         wo.normalize();
         isect->wo = wo;
@@ -70,7 +73,8 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
 
         return true;
     }
-    return false;
+    else 
+        return false;
 }
 
 bool Mesh::intersect (Ray r, Intersection *isect) {

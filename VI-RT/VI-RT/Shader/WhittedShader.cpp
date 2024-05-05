@@ -45,7 +45,6 @@ RGB WhittedShader::directLighting (Intersection isect, Phong *f) {
                         color += f->Kd * L * cosL;
                     } // end cosL > 0.
             }
-            // continue;
         }
     }
     return color;

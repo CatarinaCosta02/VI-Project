@@ -188,6 +188,7 @@ bool Scene::Load(const std::string &fname)
 
     // Swap the order of the primitives at positions 2 and 3
     //std::iter_swap(prims.begin() + 5, prims.begin() + 6);
+    std::iter_swap(prims.begin() + 5, prims.begin() + 6);
     std::reverse(prims.begin(), prims.end());
 
     for (auto prim_itr = prims.begin() ; prim_itr != prims.end() ; prim_itr++) {
@@ -258,6 +259,7 @@ bool Scene::visibility(Ray s, const float maxL)
     bool visible = true;
     Intersection curr_isect;
 
+    
     if (numPrimitives == 0)
         return true;
 

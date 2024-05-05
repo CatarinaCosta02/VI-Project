@@ -5,6 +5,8 @@
 //  Created by Luis Paulo Santos on 14/03/2023.
 //
 
+// calcula a aparencia individual de cada pixel, neste caso, a cor do pixel consoante a luz ambiente e a luz direta
+// somando a luz ambiente e a luz direta
 #ifndef WhittedShader_hpp
 #define WhittedShader_hpp
 
