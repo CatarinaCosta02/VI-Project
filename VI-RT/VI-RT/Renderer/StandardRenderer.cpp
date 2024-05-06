@@ -33,19 +33,28 @@ void StandardRenderer::Render() {
             bool intersected;
             RGB color;
             for (int ss=0; ss<spp; ss++) {
-            
+                /*
                 if (jitter) {
                 
                     float jitterV[2];
                     jitterV[0] = ((float)rand())/((float)RAND_MAX);
                     jitterV[1] = ((float)rand())/((float)RAND_MAX);
 
-                    // Generate Ray (camera)        
-                    bool generatedRay = perspCam->GenerateRay(x, y, &primary, jitterV);
+                    // Generate Ray (camera)       
+                    //bool generatedRay = perspCam->GenerateRay(x, y, &primary, jitterV);
+                    perspCam->GenerateRay(x, y, &primary, jitterV);
 
                 } else {
+                    // Generate Ray (camera)
                     bool generatedRay = perspCam->GenerateRay(x, y, &primary);
                 }
+                */
+                float jitterV[2];
+                jitterV[0] = ((float)rand())/((float)RAND_MAX);
+                jitterV[1] = ((float)rand())/((float)RAND_MAX);
+
+                // Generate Ray (camera)
+                bool generatedRay = perspCam->GenerateRay(x, y, &primary, jitterV);
 
                 // trace ray (scene)
                 intersected = scene->trace(primary, &isect);
@@ -55,8 +64,10 @@ void StandardRenderer::Render() {
                     numIntersectionsNOT++;
                 
 
-                // shade this intersection (shader) - remember: depth=0
-                color = shd->shade(intersected, isect, 0);
+                // shade this intersection (shader) - remember: depth=0~
+                color = shd->directLighting(isect, Phong *f)
+                // color = shd->shade(intersected, isect, 0);
+
                 if (color.R == 255 && color.G == 255 && color.B == 255)
                     white++;
                 else if (color.R == 0 && color.G == 0 && color.B == 0) 

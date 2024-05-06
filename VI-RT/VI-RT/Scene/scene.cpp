@@ -82,8 +82,8 @@ bool Scene::Load(const std::string &fname)
     std::cout << std::endl;
 
     const std::vector<tinyobj::material_t> materials = myObj.GetMaterials();
-    for (auto it = materials.begin(); it != materials.end(); it++)
-    {
+    for (auto it = materials.begin(); it != materials.end(); it++) {
+        
         Phong *mat = new Phong;
 
         mat->Ka.R = it->ambient[0];
@@ -198,7 +198,7 @@ bool Scene::Load(const std::string &fname)
         std::cout << "Material name: " << (*prim_itr)->material_name << " (index: " << (*prim_itr)->material_ndx << ")" << std::endl;
         // std::cout << "Bounding Box Min: (" << m->bb.min.X << ", " << m->bb.min.Y << ", " << m->bb.min.Z << ")" << std::endl;
         // std::cout << "Bounding Box Max: (" << m->bb.max.X << ", " << m->bb.max.Y << ", " << m->bb.max.Z << ")" << std::endl;
-        std::cout << std::endl;   
+        std::cout << std::endl;
     }
 
     PrintInfo(myObj);  
