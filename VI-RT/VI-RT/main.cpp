@@ -53,7 +53,7 @@ int main(int argc, const char * argv[]) {
 
     // add an ambient light to the scene
     //AmbientLight *ambient = new AmbientLight(RGB(0.05,0.05,0.05));
-    AmbientLight *ambient = new AmbientLight(RGB(0.05f,0.05f,0.05f));
+    AmbientLight *ambient = new AmbientLight(RGB(0.5f,0.5f,0.5f));
     scene.lights.push_back(ambient);
     scene.numLights++;
 
