@@ -13,8 +13,12 @@
 
 class Phong: public BRDF {
 public:
-    RGB Ka, Kd, Ks, Kt;
+    RGB Ka;
+    RGB Kd;
+    RGB Ks;
+    RGB Kt;
     float Ns;
+
 };
 
 #endif /* Phong_hpp */

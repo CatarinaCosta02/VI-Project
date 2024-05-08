@@ -109,6 +109,7 @@ public:
     float X,Y,Z;
     Point ():X(0.),Y(0.),Z(0.){}
     Point (float x, float y, float z):X(x),Y(y),Z(z){}
+    Point(const Point &p) :X(p.X), Y(p.Y), Z(p.Z) {}
     ~Point(){}
     Point operator -(const Point &p) const { return {X-p.X, Y-p.Y, Z-p.Z};}
     Point operator +(const Point &p) const { return {X+p.X, Y+p.Y, Z+p.Z};}
@@ -124,10 +125,6 @@ public:
     inline void set(float x, float y, float z) {
         X=x;Y=y;Z=z;
     }
-    // Calculate the length (magnitude) of the vector
-    float length() const {
-        return std::sqrt(X*X + Y*Y + Z*Z);
-    }
     // note that methods declared within the class are inline by default
     inline Vector vec2point (Point p2) {
         Vector v(p2.X-X, p2.Y-Y, p2.Z-Z);
@@ -138,5 +135,6 @@ public:
         return Point(XYZ[x], XYZ[y], XYZ[z]);
     }
 };
+
 
 #endif /* vector_hpp */

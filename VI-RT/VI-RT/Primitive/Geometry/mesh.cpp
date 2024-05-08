@@ -69,7 +69,11 @@ bool Mesh::TriangleIntersect (Ray r, Face f, Intersection *isect) {
         wo.normalize();
         isect->wo = wo;
         isect->depth = t;
-        isect->FaceID = f.FaceID;
+        isect->FaceID = -1;
+
+        isect->pix_x = r.pix_x;
+        isect->pix_y = r.pix_y;
+        isect->isLight = false;
 
         return true;
     }
@@ -95,6 +99,10 @@ bool Mesh::intersect (Ray r, Intersection *isect) {
             min_depth = curr_isect.depth;
             min_isect = curr_isect;
         }
+    }
+
+    if (intersect){
+        *isect = min_isect;
     }
     
     return intersect;

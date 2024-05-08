@@ -24,35 +24,29 @@ public:
         bb.update(v3);
     }
     
-    // Heron's formula to calculate the area of the triangle
-    float area() {
-        float a = edge1.length();
-        float b = edge2.length();
-        float c = (v2 - v3).length(); // Third edge, calculated from vertices
-
-        // Calculate semiperimeter
-        float s = (a + b + c) / 2.0f;
-
-        // Heron's formula
-        float A = sqrt(s * (s - a) * (s - b) * (s - c));
-
-        return A;
+    float length(const Point& p1, const Point& p2) const {
+        return sqrt(pow(p2.X - p1.X, 2) + pow(p2.Y - p1.Y, 2) + pow(p2.Z - p1.Z, 2));
     }
+    
+    // Heron's formula
+    // https://www.mathopenref.com/heronsformula.html
+    float area () {
+        
+        const float A = length(this->v1, this->v2);
+        const float B = length(this->v2, this->v3);
+        const float C = length(this->v3, this->v1);
+        float p = (A + B + C) / 2.0f;
+        return sqrt(p * (p - A) * (p - B) * (p - C));
 
-    // Heron's formula to calculate the area of a triangle formed by three given points
-    float points_area(Point v1, Point v2, Point v3) {
-        // Calculate lengths of edges
-        float a = (v1 - v2).length();
-        float b = (v1 - v3).length();
-        float c = (v2 - v3).length();
+    }
+    float points_area (Point v1, Point v2, Point v3) {
+        
+        const float A = length(v1, v2);
+        const float B = length(v2, v3);
+        const float C = length(v3, v1);
+        float p = (A + B + C) / 2.0f;
+        return sqrt(p * (p - A) * (p - B) * (p - C));
 
-        // Calculate semiperimeter
-        float s = (a + b + c) / 2.0f;
-
-        // Heron's formula
-        float A = sqrt(s * (s - a) * (s - b) * (s - c));
-
-        return A;
     }
 };
 

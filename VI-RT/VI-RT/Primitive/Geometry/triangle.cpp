@@ -65,10 +65,15 @@ bool Triangle::intersect(Ray r, Intersection *isect) {
         isect->wo = wo;
         isect->depth = t;
         isect->FaceID = -1;
+        
+        isect->pix_x = r.pix_x;
+        isect->pix_y = r.pix_y;
+        isect->isLight = false;
 
         return true;
     }
     else  {// This means that there is a line intersection but not a ray intersection.
+        std::cout << "Line intersection but not a ray intersection" << std::endl;
         return false;
     }
 }
