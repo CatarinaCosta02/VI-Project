@@ -61,6 +61,8 @@ void addPointLights(Scene &scene, int numLights) {
     }
 }
 
+
+
 int main(int argc, const char * argv[]) {
     Scene scene;
     Perspective *cam; // Camera
@@ -83,7 +85,7 @@ int main(int argc, const char * argv[]) {
 
     // create the shader
     RGB background(0.5, 0.05, 0.5); // roxo
-    shd = new WhittedShader(&scene, background);
+    shd = new DistributedShader(&scene, background);
 
     // add an ambient light to the scene
     AmbientLight *ambient = new AmbientLight(RGB(0.5f,0.5f,0.5f));
