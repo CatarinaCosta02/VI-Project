@@ -65,7 +65,7 @@ void StandardRenderer::Render() {
                     other++;
                     
             }
-            color = color/float(spp);                
+            color = color/spp;                
             // write the result into the image frame buffer (image)
             img->set(x,y,color);
         } // loop over columns

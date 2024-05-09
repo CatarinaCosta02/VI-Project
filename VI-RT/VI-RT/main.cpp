@@ -20,46 +20,38 @@
 
 #include <time.h>
 
-// void squareLight(Point p, float size, RGB intensity, std::vector <Light *> *lights,int *num) {
-//     Point v1 = Point(p.X - size, p.Y, p.Z - size);
-//     Point v2 = Point(p.X + size, p.Y, p.Z - size);
-//     Point v3 = Point(p.X + size, p.Y, p.Z + size);
-//     Point v4 = Point(p.X - size, p.Y, p.Z + size);
-//     Vector ex = v2.vec2point(v1); // Edge vector from v1 to v2
-//     Vector fx = v3.vec2point(v1); // Edge vector from v1 to v3
-
-//     // Calculate face normal using the cross product
-//     Vector n = ex.cross(fx);
-
-
-//     // Normalize the face normal
-//     n.normalize();
+void addSquareLight(Point p, float size, RGB intensity, std::vector <Light *> *lights,int *num) {
+    Point v1 = Point(p.X - size, p.Y, p.Z - size);
+    Point v2 = Point(p.X + size, p.Y, p.Z - size);
+    Point v3 = Point(p.X + size, p.Y, p.Z + size);
+    Point v4 = Point(p.X - size, p.Y, p.Z + size);
+    Vector ex = v2.vec2point(v1);
+    Vector fx = v3.vec2point(v1);
+    Vector n = ex.cross(fx);
+    n.normalize();
 
 
-//     AreaLight* l1 = new AreaLight(intensity, v1, v2, v3, n);
-//     AreaLight* l2 = new AreaLight(intensity, v1, v3, v4, n);
-
-//     lights->push_back(l1);
-//     (*num)++;
-//     lights->push_back(l2);
-//     (*num)++;
-
-// }
+    AreaLight* l1 = new AreaLight(intensity, v1, v2, v3, n);
+    AreaLight* l2 = new AreaLight(intensity, v1, v3, v4, n);
+    lights->push_back(l1);
+    lights->push_back(l2);
+    *num += 2;
+}
 
 // Function to add multiple point lights to the scene
-void addPointLights(Scene &scene, int numLights) {
-    RGB lightColor(0.85f, 0.85f, 0.85f);
+// void addPointLights(Scene &scene, int numLights) {
+//     RGB lightColor(0.85f, 0.85f, 0.85f);
 
-    Point basePosition(288,508,282);
-    int spacing = 5;
+//     Point basePosition(288,508,282);
+//     int spacing = 5;
 
-    for (int i = 0; i < numLights; ++i) {
-        Point position(basePosition.X + i * spacing, basePosition.Y, basePosition.Z + i * spacing);
-        PointLight *pointLight = new PointLight(lightColor, position);
-        scene.lights.push_back(pointLight);
-        scene.numLights++;
-    }
-}
+//     for (int i = 0; i < numLights; ++i) {
+//         Point position(basePosition.X + i * spacing, basePosition.Y, basePosition.Z + i * spacing);
+//         PointLight *pointLight = new PointLight(lightColor, position);
+//         scene.lights.push_back(pointLight);
+//         scene.numLights++;
+//     }
+// }
 
 
 
@@ -88,24 +80,23 @@ int main(int argc, const char * argv[]) {
     shd = new DistributedShader(&scene, background);
 
     // add an ambient light to the scene
-    AmbientLight *ambient = new AmbientLight(RGB(0.5f,0.5f,0.5f));
+    AmbientLight *ambient = new AmbientLight(RGB(0.7f,0.7f,0.7f));
     scene.lights.push_back(ambient);
     scene.numLights++;
 
 
     // Modifiquem aqui para adicionar quanta pointLights queremos
-    addPointLights(scene, 8);
+    //addPointLights(scene, 8);
 
-    
 
-//  // Area lights for the cornell box
-//     std::vector<AreaLight*> light_square;
-//     int height = 547.99;
-//     squareLight(Point(278, height, 278), 60, RGB(0.7, 0.7, 0.7), &(scene.lights), &(scene.numLights));
-//     squareLight(Point(100, height, 100), 60, RGB(0.2, 0.2, 0.2),  &(scene.lights), &(scene.numLights));
-//     squareLight(Point(100, height, 450), 60, RGB(0.2, 0.2, 0.2),  &(scene.lights), &(scene.numLights));
-//     squareLight(Point(450, height, 100), 60, RGB(0.2, 0.2, 0.2),  &(scene.lights), &(scene.numLights));
-//     squareLight(Point(450, height, 450), 60, RGB(0.2, 0.2, 0.2),  &(scene.lights), &(scene.numLights));
+    // Modifiquem aqui para adicionar quantas areaLights quiserem
+    // luz do centro
+    addSquareLight(Point(288, 548, 288), 60, RGB(0.9, 0.9, 0.9),  &(scene.lights), &(scene.numLights));
+    // luzes dos cantos
+    addSquareLight(Point(110, 548, 110), 30, RGB(0.9, 0.9, 0.9),  &(scene.lights), &(scene.numLights));
+    addSquareLight(Point(450, 548, 450), 30, RGB(0.9, 0.9, 0.9),  &(scene.lights), &(scene.numLights));
+    addSquareLight(Point(110, 548, 450), 30, RGB(0.9, 0.9, 0.9),  &(scene.lights), &(scene.numLights));
+    addSquareLight(Point(450, 548, 110), 30, RGB(0.9, 0.9, 0.9),  &(scene.lights), &(scene.numLights));
     
 
     for (auto l = scene.lights.begin() ; l != scene.lights.end() ; l++) {
@@ -143,7 +134,7 @@ int main(int argc, const char * argv[]) {
     
     // declare the renderer
     // int spp=64;
-    int spp=5;     // samples per pixel
+    int spp=6;     // samples per pixel
     StandardRenderer myRender (cam, &scene, img, shd, spp);
 
     // render

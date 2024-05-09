@@ -101,6 +101,7 @@ bool Mesh::intersect (Ray r, Intersection *isect) {
         }
     }
 
+    // If there was an intersection, update the intersection data
     if (intersect){
         *isect = min_isect;
     }
