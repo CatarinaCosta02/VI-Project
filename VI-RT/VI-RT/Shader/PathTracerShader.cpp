@@ -16,6 +16,9 @@
 
 //#include "DEB.h"
 
+// ESTA FUNÇÃO TODA NAO FAZ SENTIDO
+// distribuir em funções os diferentes tipos de luz, e chamar na main quando necessário
+
 RGB PathTracerShader::directLighting (Intersection isect, Phong *f){
     
     RGB color(0.,0.,0.);
@@ -36,14 +39,12 @@ RGB PathTracerShader::directLighting (Intersection isect, Phong *f){
             light_pdf = 1.f/((float)scene->numLights);
         }
         
-        if (l->type == AMBIENT_LIGHT) {  // is it an ambient light ?
-            if (!f->Ka.isZero()) {
+        else if (l->type == AMBIENT_LIGHT && !f->Ka.isZero()) {  // is it an ambient light ?
                 RGB Ka = f->Ka;
                 this_l_color = Ka * l->L();
-            }
         }
-        if (l->type == POINT_LIGHT) {  // is it a point light ?
-            if (!f->Kd.isZero()) {
+        else if (l->type == POINT_LIGHT && !f->Kd.isZero() ) {  // is it a point light ?
+            
                 RGB L, Kd = f->Kd;
                 Point lpoint;
                 
@@ -65,10 +66,10 @@ RGB PathTracerShader::directLighting (Intersection isect, Phong *f){
                     // generate the shadow ray
                     Ray shadow(isect.p, Ldir);
                     
-                    shadow.pix_x = isect.pix_x;
-                    shadow.pix_y = isect.pix_y;
+                    //shadow.pix_x = isect.pix_x;
+                    //shadow.pix_y = isect.pix_y;
                     
-                    shadow.FaceID = isect.FaceID;
+                    //shadow.FaceID = isect.FaceID;
                     
                     // adjust origin by an EPSILON along the normal to avoid self occlusion at the origin
                     shadow.adjustOrigin(isect.gn);
@@ -77,10 +78,8 @@ RGB PathTracerShader::directLighting (Intersection isect, Phong *f){
                         this_l_color = Kd * L * cosL;
                     }
                 } // end cosL > 0.
-            }
         }
-        if (l->type == AREA_LIGHT) {  // is it an area light ?
-            if (!f->Kd.isZero()) {
+        if (l->type == AREA_LIGHT && !f->Kd.isZero()) {  // is it an area light ?
                 RGB L, Kd = f->Kd;
                 Point lpoint;
                 float l_pdf;
@@ -111,10 +110,10 @@ RGB PathTracerShader::directLighting (Intersection isect, Phong *f){
                     // generate the shadow ray
                     Ray shadow(isect.p, Ldir);
                     
-                    shadow.pix_x = isect.pix_x;
-                    shadow.pix_y = isect.pix_y;
+                    //shadow.pix_x = isect.pix_x;
+                    //shadow.pix_y = isect.pix_y;
                     
-                    shadow.FaceID = isect.FaceID;
+                    //shadow.FaceID = isect.FaceID;
                     
                     // adjust origin by an EPSILON along the normal to avoid self occlusion at the origin
                     shadow.adjustOrigin(isect.gn);
@@ -123,7 +122,6 @@ RGB PathTracerShader::directLighting (Intersection isect, Phong *f){
                         this_l_color += (Kd * L * cosL) / l_pdf;
                     }
                 } // end cosL > 0.
-            }
         }  // end area light
         
         // if random sampling adjust the contribution and break the for loop
@@ -164,14 +162,12 @@ RGB PathTracerShader::specularReflection (Intersection isect, Phong *f, int dept
         
         Vector S_around_N;
         //  generate s_dir
-        // ...
-        
         Ray specular(isect.p, s_dir);
         
-        specular.pix_x = isect.pix_x;
-        specular.pix_y = isect.pix_y;
+        //specular.pix_x = isect.pix_x;
+        //specular.pix_y = isect.pix_y;
         
-        specular.FaceID = isect.FaceID;
+        //specular.FaceID = isect.FaceID;
 
         specular.adjustOrigin(isect.gn);
 
@@ -194,10 +190,10 @@ RGB PathTracerShader::specularReflection (Intersection isect, Phong *f, int dept
     else {          // ideal specular reflection
         Ray specular(isect.p, Rdir);
         
-        specular.pix_x = isect.pix_x;
-        specular.pix_y = isect.pix_y;
+        //specular.pix_x = isect.pix_x;
+        //specular.pix_y = isect.pix_y;
         
-        specular.FaceID = isect.FaceID;
+        //specular.FaceID = isect.FaceID;
 
         specular.adjustOrigin(isect.gn);
 
@@ -220,7 +216,7 @@ RGB PathTracerShader::diffuseReflection (Intersection isect, Phong *f, int depth
     RGB color(0.,0.,0.);
     Vector dir;
     float pdf;
-    // ele nao tava a reconhecer o M_PI nao sei o porque, entao tive que por localmente
+    // ele nao tava a reconhecer o M_PI nao sei o porque, entao tive que por localmentev
     const double M_PI = 3.14159265358979323846;
     
     // generate the specular ray
