@@ -76,27 +76,32 @@ int main(int argc, const char * argv[]) {
 
 
     // create the shader
-    RGB background(0.5, 0.05, 0.5); // roxo
-    shd = new DistributedShader(&scene, background);
+    //RGB background(0.5, 0.05, 0.5); // roxo
+    //shd = new DistributedShader(&scene, background);
 
     // add an ambient light to the scene
-    AmbientLight *ambient = new AmbientLight(RGB(0.7f,0.7f,0.7f));
+    AmbientLight *ambient = new AmbientLight(RGB(0.05,0.05,0.05));
     scene.lights.push_back(ambient);
     scene.numLights++;
 
 
     // Modifiquem aqui para adicionar quanta pointLights queremos
     //addPointLights(scene, 8);
+    PointLight *pl1 = new PointLight(RGB(0.65, 0.65, 0.65), Point(288, 508, 282));
+    scene.lights.push_back(pl1);
+    scene.numLights++;
 
 
+    
+    
     // Modifiquem aqui para adicionar quantas areaLights quiserem
     // luz do centro
     addSquareLight(Point(288, 548, 288), 60, RGB(0.9, 0.9, 0.9),  &(scene.lights), &(scene.numLights));
     // luzes dos cantos
-    addSquareLight(Point(110, 548, 110), 30, RGB(0.9, 0.9, 0.9),  &(scene.lights), &(scene.numLights));
-    addSquareLight(Point(450, 548, 450), 30, RGB(0.9, 0.9, 0.9),  &(scene.lights), &(scene.numLights));
-    addSquareLight(Point(110, 548, 450), 30, RGB(0.9, 0.9, 0.9),  &(scene.lights), &(scene.numLights));
-    addSquareLight(Point(450, 548, 110), 30, RGB(0.9, 0.9, 0.9),  &(scene.lights), &(scene.numLights));
+    addSquareLight(Point(110, 548, 110), 30, RGB(0.65, 0.65, 0.65),  &(scene.lights), &(scene.numLights));
+    addSquareLight(Point(450, 548, 450), 30, RGB(0.65, 0.65, 0.65),  &(scene.lights), &(scene.numLights));
+    addSquareLight(Point(110, 548, 450), 30, RGB(0.65, 0.65, 0.65),  &(scene.lights), &(scene.numLights));
+    addSquareLight(Point(450, 548, 110), 30, RGB(0.65, 0.65, 0.65),  &(scene.lights), &(scene.numLights));
     
 
     for (auto l = scene.lights.begin() ; l != scene.lights.end() ; l++) {
@@ -110,6 +115,7 @@ int main(int argc, const char * argv[]) {
             std::cout << "AreaLight guardada" << std::endl;
         }
     }
+    
 
     scene.printSummary();
     std::cout << std::endl;
@@ -130,12 +136,22 @@ int main(int argc, const char * argv[]) {
 
     cam->Information();
     std::cout << std::endl;
+
+    //RGB background(0.5, 0.05, 0.5); // roxo
+    //shd = new DistributedShader(&scene, background);
+    
+    // experimentar path tracer
+    // roxo
+    shd = new PathTracerShader(&scene, RGB(0.5, 0.05, 0.5));
+
     
     
     // declare the renderer
     // int spp=64;
-    int spp=6;     // samples per pixel
+    int spp=16;     // samples per pixel
     StandardRenderer myRender (cam, &scene, img, shd, spp);
+
+    // sem spp
 
     // render
     start = clock();

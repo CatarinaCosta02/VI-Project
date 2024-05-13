@@ -28,11 +28,12 @@ void StandardRenderer::Render() {
     // main rendering loop: get primary rays from the camera until done
     for (y=0 ; y< H ; y++) {  // loop over rows
         for (x=0 ; x< W ; x++) { // loop over columns
-            Ray primary;
-            Intersection isect;
-            bool intersected;
-            RGB color;
+            //Ray primary;
+            //Intersection isect;
+            //bool intersected;
+            RGB color(0.,0.,0.);
             for (int ss=0; ss<spp; ss++) {
+                Ray primary;
             
                 if (jitter) {
                 
@@ -40,29 +41,32 @@ void StandardRenderer::Render() {
                     jitterV[0] = ((float)rand())/((float)RAND_MAX);
                     jitterV[1] = ((float)rand())/((float)RAND_MAX);
 
-                    // Generate Ray (camera)        
-                    bool generatedRay = perspCam->GenerateRay(x, y, &primary, jitterV);
+                    // Generate Ray (camera) 
+                    cam->GenerateRay(x, y, &primary, jitterV);       
+                    //bool generatedRay = perspCam->GenerateRay(x, y, &primary, jitterV);
 
                 } else {
-                    bool generatedRay = perspCam->GenerateRay(x, y, &primary);
+                    cam->GenerateRay(x, y, &primary);
+                    //bool generatedRay = perspCam->GenerateRay(x, y, &primary);
                 }
 
                 // trace ray (scene)
-                intersected = scene->trace(primary, &isect);
+                Intersection isect;
+                bool intersected = scene->trace(primary, &isect);
+
                 if (intersected == true)
                     numintersections++;
                 else 
                     numIntersectionsNOT++;
-                
-
                 // shade this intersection (shader) - remember: depth=0
-                color = shd->shade(intersected, isect, 0);
+                RGB this_color = shd->shade(intersected, isect, 0);
                 if (color.R == 255 && color.G == 255 && color.B == 255)
                     white++;
                 else if (color.R == 0 && color.G == 0 && color.B == 0) 
                     black++;
                 else 
                     other++;
+                color += this_color;
                     
             }
             color = color/spp;                

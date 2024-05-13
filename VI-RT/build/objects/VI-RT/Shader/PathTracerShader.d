@@ -8,4 +8,4 @@ build/objects/VI-RT/Shader/PathTracerShader.o: \
  VI-RT/Primitive/BRDF/Phong.hpp VI-RT/Primitive/BRDF/BRDF.hpp \
  VI-RT/Light/AreaLight.hpp VI-RT/Light/light.hpp \
  VI-RT/Primitive/Geometry/triangle.hpp \
- VI-RT/Primitive/Geometry/geometry.hpp
+ VI-RT/Primitive/Geometry/geometry.hpp VI-RT/Light/PointLight.hpp

@@ -54,6 +54,8 @@ bool Perspective::GenerateRay(const int x, const int y, Ray *r, const float *cam
         yc = 2.f * ((float)y + cam_jitter[1])/H - 1.f;
     }
 
+    // ... Generate primary ray
+
     // Cria um vetor de direção usando as coordenadas NDC calculadas
     Vector dir = Vector(xc, yc, 1);
     

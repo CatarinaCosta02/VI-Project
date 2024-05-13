@@ -17,8 +17,8 @@ RGB WhittedShader::directLighting (Intersection isect, Phong *f) {
         
         if ((*l)->type == AMBIENT_LIGHT) {  // is it an ambient light ?
             if (!f->Ka.isZero()) {
-            RGB Ka = f->Ka;
-            color += Ka * (*l)->L();
+            //RGB Ka = f->Ka;
+            color += f->Ka * (*l)->L();
            }
            continue;
         }
