@@ -56,17 +56,18 @@ RGB DistributedShader::directLighting(Intersection isect, Phong *f)
             }
         }
 
-        if (l->type == AREA_LIGHT)
+        if (l->type == AREA_LIGHT && !f->Kd.isZero())
         {
-            if (!f->Kd.isZero())
-            {
 
-                RGB L;
+                RGB L, Kd = f->Kd;
                 Point lpoint;
                 float l_pdf;
                 AreaLight *al = (AreaLight *)l;
 
-                float rnd[2] = {((float)rand()) / ((float)RAND_MAX), ((float)rand()) / ((float)RAND_MAX)};
+                //float rnd[2] = {((float)rand()) / ((float)RAND_MAX), ((float)rand()) / ((float)RAND_MAX)};
+                float rnd[2];
+                rnd[0] = ((float)rand()) / ((float)RAND_MAX);
+                rnd[1] = ((float)rand()) / ((float)RAND_MAX);
                 L = al->Sample_L(rnd, &lpoint, l_pdf);
 
                 Vector Ldir = isect.p.vec2point(lpoint);
@@ -80,8 +81,8 @@ RGB DistributedShader::directLighting(Intersection isect, Phong *f)
                 {
                     Ray shadow(isect.p, Ldir);
                     shadow.pix_x = isect.pix_x;
-                    shadow.pix_y = isect.pix_y;
-                    shadow.FaceID = isect.FaceID;
+                    //shadow.pix_y = isect.pix_y;
+                    //shadow.FaceID = isect.FaceID;
                     shadow.adjustOrigin(isect.gn);
 
                     if (scene->visibility(shadow, Ldistance - EPSILON))
@@ -89,8 +90,7 @@ RGB DistributedShader::directLighting(Intersection isect, Phong *f)
                         color += (f->Kd * L * cosL) / l_pdf;
                     }
                 }// end cosL > 0.
-            }
-        }// end AREA_LIGHT
+            }// end AREA_LIGHT
     } // for loop
     return color;
 }

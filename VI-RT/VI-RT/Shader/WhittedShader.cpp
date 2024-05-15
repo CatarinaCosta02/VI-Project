@@ -45,6 +45,11 @@ RGB WhittedShader::directLighting (Intersection isect, Phong *f) {
                         color += f->Kd * L * cosL;
                     } // end cosL > 0.
             }
+            continue;
+        }
+        if ((*l)->type == AREA_LIGHT) {  // is it an area light ?
+            if (!f->Kd.isZero()) {
+            }
         }
     }
     return color;

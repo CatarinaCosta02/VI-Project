@@ -73,7 +73,7 @@ bool Triangle::intersect(Ray r, Intersection *isect) {
         return true;
     }
     else  {// This means that there is a line intersection but not a ray intersection.
-        std::cout << "Line intersection but not a ray intersection" << std::endl;
+        // std::cout << "Line intersection but not a ray intersection" << std::endl;
         return false;
     }
 }
