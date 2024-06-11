@@ -8,6 +8,7 @@
 #ifndef Scene_hpp
 #define Scene_hpp
 
+#pragma once
 #include <iostream>
 #include <string>
 #include <vector>

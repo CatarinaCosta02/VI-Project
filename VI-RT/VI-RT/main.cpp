@@ -137,7 +137,7 @@ int main(int argc, const char * argv[]) {
     cam->Information();
     std::cout << std::endl;
 
-    RGB background(0.5, 0.05, 0.5); // roxo
+    RGB background(0.2, 0.2, 0.2); // cinza forte
 
     // AmbienteShader
     // shd = new AmbientShader(&scene, background);
@@ -153,7 +153,7 @@ int main(int argc, const char * argv[]) {
     
     // declare the renderer
     // int spp=64;
-    int spp=32;     // samples per pixel
+    int spp=200;     // samples per pixel
     StandardRenderer myRender (cam, &scene, img, shd, spp);
 
     // sem spp

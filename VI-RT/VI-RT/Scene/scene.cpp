@@ -5,6 +5,7 @@
 //  Created by Luis Paulo Santos on 30/01/2023.
 //
 
+#pragma once
 #include "scene.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION

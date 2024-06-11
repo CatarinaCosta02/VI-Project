@@ -8,6 +8,7 @@
 #ifndef camera_hpp
 #define camera_hpp
 
+#pragma once
 #include "ray.hpp"
 #include <cstddef>
 

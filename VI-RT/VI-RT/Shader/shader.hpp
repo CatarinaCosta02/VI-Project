@@ -8,6 +8,7 @@
 #ifndef shader_hpp
 #define shader_hpp
 
+#pragma once
 #include "scene.hpp"
 #include "RGB.hpp"
 

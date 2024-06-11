@@ -5,6 +5,7 @@
 //  Created by Luis Paulo Santos on 14/03/2023.
 //
 
+#pragma once
 #include "PathTracerShader.hpp"
 #include "Phong.hpp"
 #include "ray.hpp"

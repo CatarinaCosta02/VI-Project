@@ -8,6 +8,7 @@
 #ifndef Ray_hpp
 #define Ray_hpp
 
+#pragma once
 #include "vector.hpp"
 #include <cfloat>
 
