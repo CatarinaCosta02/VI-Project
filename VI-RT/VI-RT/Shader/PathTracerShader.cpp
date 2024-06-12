@@ -1,171 +1,116 @@
-//
-//  AmbientShader.cpp
-//  VI-RT-LPS
-//
-//  Created by Luis Paulo Santos on 14/03/2023.
-//
-
-#pragma once
 #include "PathTracerShader.hpp"
 #include "Phong.hpp"
 #include "ray.hpp"
 #include "AreaLight.hpp"
-#include "PointLight.hpp"
 #include <stdlib.h>
-#define _USE_MATH_DEFINES
 #include <math.h>
-#include <cmath>
 
-
-//#include "DEB.h"
-
-// ESTA FUNÇÃO TODA NAO FAZ SENTIDO
-// distribuir em funções os diferentes tipos de luz, e chamar na main quando necessário
-
-// AQUI
 const float m_pi = 3.14159265358979323846;
-RGB PathTracerShader::directLighting (Intersection isect, Phong *f){
-    
-    RGB color(0.,0.,0.);
+const float MAX_INTENSITY = 10.0f; // Valor de clamp para intensidade
+
+RGB PathTracerShader::directLighting (Intersection isect, Phong *f) {
+    RGB color(0., 0., 0.);
     Light *l;
     int l_ndx;
-    const bool RANDOM_SAMPLE_ONE=true;
+    const bool RANDOM_SAMPLE_ONE = true;
     float light_pdf;
 
-    for (auto l_iter=scene->lights.begin() ; l_iter != scene->lights.end() ; l_iter++) {
-        RGB this_l_color (0.,0.,0.);
-        l = (Light *) (*l_iter);
-        
-        // if random sampling reaasign l
+    for (auto l_iter = scene->lights.begin(); l_iter != scene->lights.end(); l_iter++) {
+        RGB this_l_color(0., 0., 0.);
+        l = (Light *)(*l_iter);
+
         if (RANDOM_SAMPLE_ONE) {
-            // randomly select one light source
             l_ndx = rand() % scene->numLights;
             l = scene->lights[l_ndx];
-            light_pdf = 1.f/((float)scene->numLights);
+            light_pdf = 1.f / ((float)scene->numLights);
         }
-        
-        else if (l->type == AMBIENT_LIGHT && !f->Ka.isZero()) {  // is it an ambient light ?
+
+        if (l->type == AMBIENT_LIGHT) {
+            if (!f->Ka.isZero()) {
                 RGB Ka = f->Ka;
                 this_l_color = Ka * l->L();
+            }
         }
-        else if (l->type == POINT_LIGHT && !f->Kd.isZero() ) {  // is it a point light ?
-            
+        if (l->type == POINT_LIGHT) {
+            if (!f->Kd.isZero()) {
                 RGB L, Kd = f->Kd;
                 Point lpoint;
-                
-                // get the position and radiance of the light source
                 L = l->Sample_L(NULL, &lpoint);
-                
-                // compute the direction from the intersection point to the light source
                 Vector Ldir = isect.p.vec2point(lpoint);
                 const float Ldistance = Ldir.norm();
-                
-                // now normalize Ldir
                 Ldir.normalize();
-                
-                // compute the cosine between Ldir  and the shading normal at the intersection point
                 float cosL = Ldir.dot(isect.sn);
-                
-                // shade
-                if (cosL>0.)  { // the light is NOT behind the primitive
-                    // generate the shadow ray
+
+                if (cosL > 0.) {
                     Ray shadow(isect.p, Ldir);
-                    
-                    //shadow.pix_x = isect.pix_x;
-                    //shadow.pix_y = isect.pix_y;
-                    
-                    //shadow.FaceID = isect.FaceID;
-                    
-                    // adjust origin by an EPSILON along the normal to avoid self occlusion at the origin
+                    shadow.pix_x = isect.pix_x;
+                    shadow.pix_y = isect.pix_y;
+                    shadow.FaceID = isect.FaceID;
                     shadow.adjustOrigin(isect.gn);
-                    
-                    if (scene->visibility(shadow, Ldistance-EPSILON)) {  // if light source not occluded
+
+                    if (scene->visibility(shadow, Ldistance - EPSILON)) {
                         this_l_color = Kd * L * cosL;
                     }
-                } // end cosL > 0.
+                }
+            }
         }
-        if (l->type == AREA_LIGHT && !f->Kd.isZero()) {  // is it an area light ?
+        if (l->type == AREA_LIGHT) {
+            if (!f->Kd.isZero()) {
                 RGB L, Kd = f->Kd;
                 Point lpoint;
                 float l_pdf;
                 AreaLight *al = (AreaLight *)l;
-                
-                // get the position and radiance of the light source
-                // get 2 random number in [0,1[
                 float rnd[2];
                 rnd[0] = ((float)rand()) / ((float)RAND_MAX);
                 rnd[1] = ((float)rand()) / ((float)RAND_MAX);
                 L = al->Sample_L(rnd, &lpoint, l_pdf);
-                
-                // compute the direction from the intersection point to the light source
                 Vector Ldir = isect.p.vec2point(lpoint);
                 const float Ldistance = Ldir.norm();
-                
-                // now normalize Ldir
                 Ldir.normalize();
-                
-                // compute the cosine between Ldir  and the shading normal at the intersection point
                 float cosL = Ldir.dot(isect.sn);
-                
-                // compute the cosine between Ldir  and the area light source normal
                 float cosL_LA = Ldir.dot(al->gem->normal);
-                
-                // shade
-                if (cosL>0. and cosL_LA<=0.)  { // light is NOT behind primitive AND light normal points to the ray o
-                    // generate the shadow ray
+
+                if (cosL > 0. && cosL_LA <= 0.) {
                     Ray shadow(isect.p, Ldir);
-                    
                     shadow.pix_x = isect.pix_x;
                     shadow.pix_y = isect.pix_y;
-                    
                     shadow.FaceID = isect.FaceID;
-                    
-                    // adjust origin by an EPSILON along the normal to avoid self occlusion at the origin
                     shadow.adjustOrigin(isect.gn);
-                    
-                    if (scene->visibility(shadow, Ldistance-EPSILON)) {  // if light source not occluded
+
+                    if (scene->visibility(shadow, Ldistance - EPSILON)) {
                         this_l_color += (Kd * L * cosL) / l_pdf;
                     }
-                } // end cosL > 0.
-        }  // end area light
-        
-        // if random sampling adjust the contribution and break the for loop
+                }
+            }
+        }
+
         if (RANDOM_SAMPLE_ONE) {
             color = this_l_color / light_pdf;
             break;
-        } else {   // not random sampling, sum the individual contributions
+        } else {
             color += this_l_color;
         }
-    } // for loop
+    }
+
+    // Clamp a intensidade da luz
+    color.clamp(0.0, MAX_INTENSITY);
+
     return color;
 }
 
-// AQUI
 RGB PathTracerShader::specularReflection (Intersection isect, Phong *f, int depth) {
-    RGB color(0.,0.,0.);
+    RGB color(0., 0., 0.);
     Vector Rdir, s_dir;
     float pdf;
-    Intersection s_isect;
-    
-    // generate the specular ray
-    
-    // IDEAL SPECULAR REFLECTION
-    // direction R = 2 (N.V) N - V
+
     float cos = isect.gn.dot(isect.wo);
     Rdir = 2.f * cos * isect.gn - isect.wo;
-    Ray specular(isect.p, Rdir);
-    specular.adjustOrigin(isect.gn);
-    
 
-    if (f->Ns < 1000) { // glossy materials 
-        // actual direction distributed around Rdir according to the cosine lobe
-        // generate the cosine lobel sampled direction around (0,0,1)
-        // following item (36) of the Global illumination compendium
-        // get 2 random number in [0,1[
+    if (f->Ns < 1000) {
         float rnd[2];
         rnd[0] = ((float)rand()) / ((float)RAND_MAX);
         rnd[1] = ((float)rand()) / ((float)RAND_MAX);
-        
+
         Vector S_around_N;
         const float cos_theta = powf(rnd[1], 1. / (f->Ns + 1.));
         S_around_N.Z = cos_theta;
@@ -175,158 +120,121 @@ RGB PathTracerShader::specularReflection (Intersection isect, Phong *f, int dept
         const float cos_pow = powf(cos_theta, f->Ns) / (2.f * m_pi);
         pdf = (f->Ns + 1.f) * cos_pow;
 
-        //  generate s_dir
         Vector Rx, Ry;
         Rdir.CoordinateSystem(&Rx, &Ry);
 
         s_dir = S_around_N.Rotate(Rx, Ry, Rdir);
+
         Ray specular(isect.p, s_dir);
-        
+
         specular.pix_x = isect.pix_x;
         specular.pix_y = isect.pix_y;
-        
         specular.FaceID = isect.FaceID;
-
         specular.adjustOrigin(isect.gn);
 
-        // // OK, we have the ray : trace and shade it recursively
         bool intersected;
         Intersection s_isect;
-        // trace ray
         intersected = scene->trace(specular, &s_isect);
-        RGB Rcolor = shade (intersected, s_isect, depth+1);
-        color = (f->Ks  * Rcolor) / pdf;
 
-        return color;
+        RGB Rcolor = shade(intersected, s_isect, depth + 1);
 
-    }
-    else {          
-        // ideal specular reflection
+        color = (f->Ks * Rcolor) / pdf;
+
+    } else {
         Ray specular(isect.p, Rdir);
-
         specular.pix_x = isect.pix_x;
         specular.pix_y = isect.pix_y;
-
         specular.FaceID = isect.FaceID;
-
         specular.adjustOrigin(isect.gn);
 
-        // // OK, we have the ray : trace and shade it recursively
         bool intersected;
         Intersection s_isect;
-        // // trace ray
         intersected = scene->trace(specular, &s_isect);
 
-        // shade this intersection
-        RGB Rcolor = shade (intersected, s_isect, depth+1);
-        
-        color = (f->Ks  * Rcolor);
-        return color;
+        RGB Rcolor = shade(intersected, s_isect, depth + 1);
+
+        color = (f->Ks * Rcolor);
     }
+
+    // Clamp a intensidade da luz
+    color.clamp(0.0, MAX_INTENSITY);
+
+    return color;
 }
 
 RGB PathTracerShader::diffuseReflection (Intersection isect, Phong *f, int depth) {
-    RGB color(0.,0.,0.);
+    RGB color(0., 0., 0.);
     Vector dir;
     float pdf;
-    // ele nao tava a reconhecer o m_pi nao sei o porque, entao tive que por localmentev
-    
-    // generate the specular ray
-    
-    // actual direction distributed around N
-    // get 2 random number in [0,1[
-    float rnd[2] = {rnd[0], rnd[1]};
+
+    float rnd[2];
     rnd[0] = ((float)rand()) / ((float)RAND_MAX);
     rnd[1] = ((float)rand()) / ((float)RAND_MAX);
-        
+
     Vector D_around_Z;
-    // cosine sampling
-    float cos_theta =  D_around_Z.Z = sqrt(rnd[1]); // cos sampling
-    D_around_Z.Y = sinf(2.* m_pi *rnd[0])*sqrt(1.-rnd[1]);
-    D_around_Z.X = cosf(2.* m_pi *rnd[0])*sqrt(1.-rnd[1]);
+    float cos_theta = D_around_Z.Z = sqrt(rnd[1]);
+    D_around_Z.Y = sinf(2. * m_pi * rnd[0]) * sqrt(1. - rnd[1]);
+    D_around_Z.X = cosf(2. * m_pi * rnd[0]) * sqrt(1. - rnd[1]);
     pdf = cos_theta / (m_pi);
-        
-    // generate a coordinate system from N
+
     Vector Rx, Ry;
     isect.gn.CoordinateSystem(&Rx, &Ry);
-        
-    dir = D_around_Z.Rotate  (Rx, Ry, isect.gn);
+
+    dir = D_around_Z.Rotate(Rx, Ry, isect.gn);
     Ray diffuse(isect.p, dir);
+
+    diffuse.pix_x = isect.pix_x;
+    diffuse.pix_y = isect.pix_y;
+    diffuse.FaceID = isect.FaceID;
     diffuse.adjustOrigin(isect.gn);
-    // OK, we have the ray : trace and shade it recursively
-    
+
     Intersection d_isect;
-    // trace ray
     bool intersected = scene->trace(diffuse, &d_isect);
 
-    if (!d_isect.isLight) {  // if light source return 0 ; handled by direct
-        // shade this intersection
-        RGB Rcolor = shade (intersected, d_isect, depth+1);
-        color = (f->Kd  * cos_theta * Rcolor) / pdf;
+    if (!d_isect.isLight) {
+        RGB Rcolor = shade(intersected, d_isect, depth + 1);
+        color = (f->Kd * cos_theta * Rcolor) / pdf;
     }
-    return color;
 
+    // Clamp a intensidade da luz
+    color.clamp(0.0, MAX_INTENSITY);
+
+    return color;
 }
 
-
 RGB PathTracerShader::shade(bool intersected, Intersection isect, int depth) {
-    RGB color(0.,0.,0.);
-    
-    // if no intersection, return background
+    RGB color(0., 0., 0.);
+
     if (!intersected) {
         return (background);
     }
-    
-    if (isect.isLight) { // intersection with a light source
+
+    if (isect.isLight) {
         return isect.Le;
     }
-    
-    // get the BRDF
+
     Phong *f = (Phong *)isect.f;
-    
-    if (depth <MAX_DEPTH) {
-        if (!f->Kd.isZero()) {
-            color += specularReflection (isect, f, depth) ;
+
+    float rnd_russian = ((float)rand()) / ((float)RAND_MAX);
+    if (depth < MAX_DEPTH || rnd_russian < continue_p) {
+        RGB lcolor;
+        float rnd = ((float)rand()) / ((float)RAND_MAX);
+        float s_p = f->Ks.Y() / (f->Ks.Y() + f->Kd.Y());
+        if (rnd < s_p) {
+            lcolor = specularReflection(isect, f, depth + 1) / s_p;
+        } else {
+            lcolor = diffuseReflection(isect, f, depth + 1) / (1. - s_p);
         }
-        if (!f->Kd.isZero()) {
-            color += diffuseReflection (isect, f, depth) ;
+        if (depth < MAX_DEPTH) {
+            color += lcolor;
+        } else {
+            color += lcolor / continue_p;
         }
     }
 
-    /*
-    // 1
-    // if there is a diffuse component do direct light
     if (!f->Kd.isZero()) {
         color += directLighting(isect, f);
     }
 
-    if (depth <MAX_DEPTH) {
-        if (!f->Ks.isZero()) color+= specularReflection (isect, f, depth);
-        if (!f->Kd.isZero()) color+= diffuseReflection (isect, f, depth);
-    }
-    // if there is a diffuse component do direct light
-    if (!f->Kd.isZero()) color += directLighting(isect, f);
     return color;
-    */
-   
-        // Russian roulette
-    float rnd_russian = ((float)rand()) / ((float)RAND_MAX);
-    if (depth <MAX_DEPTH || rnd_russian < continue_p) {
-    RGB lcolor;
-    // random select between specular and diffuse
-    float rnd = ((float)rand()) / ((float)RAND_MAX);
-    float s_p = f->Ks.Y() /(f->Ks.Y()+f->Kd.Y());
-    if (rnd < s_p) {
-        lcolor = specularReflection (isect, f, depth+1) / s_p;
-    }
-    else {
-        lcolor = diffuseReflection (isect, f, depth+1) / (1.-s_p);
-    }
-    if (depth<MAX_DEPTH) // No Russian roulette
-        color += lcolor;
-    else color += lcolor / continue_p;
-    }
-    // if there is a diffuse component do direct light
-    if (!f->Kd.isZero()) color += directLighting(isect, f);
-    return color;
-};
+}

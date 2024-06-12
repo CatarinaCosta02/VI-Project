@@ -5,7 +5,6 @@
 //  Created by Luis Paulo Santos on 30/01/2023.
 //
 
-#pragma once
 #include "scene.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -91,9 +90,10 @@ bool Scene::Load(const std::string &fname)
         mat->Ka.G = it->ambient[1];
         mat->Ka.B = it->ambient[2];
 
-        mat->Kd.R = it->diffuse[0];
-        mat->Kd.G = it->diffuse[1];
-        mat->Kd.B = it->diffuse[2];
+        // Reduzir os valores de Kd para diminuir a reflectividade difusa
+        mat->Kd.R = it->diffuse[0] * 0.8;
+        mat->Kd.G = it->diffuse[1] * 0.8;
+        mat->Kd.B = it->diffuse[2] * 0.8;
 
         mat->Ns = it->shininess;
 

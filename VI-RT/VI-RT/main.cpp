@@ -63,7 +63,8 @@ int main(int argc, const char * argv[]) {
     bool success;
     clock_t start, end;
     double cpu_time_used;
-    
+
+    // success = scene.Load("../../VI-RT/Scene/tinyobjloader/models/cornell_box_VI.obj"); // LINUX
     success = scene.Load("./VI-RT/Scene/tinyobjloader/models/cornell_box_VI.obj");
     // success = scene.Load("./VI-RT/Scene/tinyobjloader/models/debug.txt");
     
@@ -80,7 +81,7 @@ int main(int argc, const char * argv[]) {
     //shd = new DistributedShader(&scene, background);
 
     // add an ambient light to the scene
-    AmbientLight *ambient = new AmbientLight(RGB(0.01,0.01,0.01));
+    AmbientLight *ambient = new AmbientLight(RGB(0.1,0.1,0.1));
     scene.lights.push_back(ambient);
     scene.numLights++;
 
@@ -96,7 +97,7 @@ int main(int argc, const char * argv[]) {
     
     // Modifiquem aqui para adicionar quantas areaLights quiserem
     // luz do centro
-    addSquareLight(Point(288, 547.99, 288), 60, RGB(0.4f, 0.4f, 0.4f),  &(scene.lights), &(scene.numLights));
+    addSquareLight(Point(288, 547.99, 288), 60, RGB(0.6f, 0.6f, 0.6f),  &(scene.lights), &(scene.numLights));
     // // luzes dos cantos
     //addSquareLight(Point(110, 548, 110), 30, RGB(0.65, 0.65, 0.65),  &(scene.lights), &(scene.numLights));
     //addSquareLight(Point(450, 548, 450), 30, RGB(0.65, 0.65, 0.65),  &(scene.lights), &(scene.numLights));
@@ -121,8 +122,8 @@ int main(int argc, const char * argv[]) {
     std::cout << std::endl;
         
     // Image resolution
-    const int W= 256;
-    const int H= 256;
+    const int W= 512;
+    const int H= 512;
     
     img = new ImagePPM(W,H);
     
@@ -153,8 +154,8 @@ int main(int argc, const char * argv[]) {
     
     // declare the renderer
     // int spp=64;
-    int spp=200;     // samples per pixel
-    StandardRenderer myRender (cam, &scene, img, shd, spp);
+    int spp=480;     // samples per pixel
+    StandardRenderer myRender(cam, &scene, img, shd, spp);
 
     // sem spp
 
