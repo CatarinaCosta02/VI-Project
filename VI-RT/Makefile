@@ -50,7 +50,7 @@
 # ##########################################N NÃO APAGAR, É PARA O FERNAS CORRER ###########################################
 # WINDOWS
 CXX      := g++
-CXXFLAGS := -std=c++11 -O3 -fopenmp
+CXXFLAGS := -std=c++11 -O3 
 LDFLAGS  := 
 BUILD    := ./build
 OBJ_DIR  := $(BUILD)/objects

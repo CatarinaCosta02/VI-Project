@@ -154,7 +154,7 @@ int main(int argc, const char * argv[]) {
     
     // declare the renderer
     // int spp=64;
-    int spp=480;     // samples per pixel
+    int spp=120;     // samples per pixel
     StandardRenderer myRender(cam, &scene, img, shd, spp);
 
     // sem spp
