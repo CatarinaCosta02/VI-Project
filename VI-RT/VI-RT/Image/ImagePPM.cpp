@@ -10,6 +10,7 @@
 #include "ImagePPM.hpp"
 #include <iostream>
 #include <fstream>
+#include <opencv2/highgui.hpp>
 
 void ImagePPM::ToneMap () {
     imageToSave = new PPM_pixel[W*H];
@@ -29,6 +30,8 @@ void ImagePPM::ToneMap () {
 
 bool ImagePPM::Save(std::string filename) {
     // convert from float to {0,1,..., 255}
+    // Converta para o formato JPEG aqui
+        // Converta para o formato PPM aqui
     ToneMap();
 
     // Open the file for writing

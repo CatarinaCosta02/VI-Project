@@ -9,7 +9,8 @@
 #include "scene.hpp"
 #include "perspective.hpp"
 #include "StandardRenderer.hpp"
-#include "ImagePPM.hpp"
+//#include "ImagePPM.hpp"
+#include "ImageJPG.hpp"
 #include "AmbientShader.hpp"
 #include "WhittedShader.hpp"
 #include "DistributedShader.hpp"
@@ -58,7 +59,8 @@ void addSquareLight(Point p, float size, RGB intensity, std::vector <Light *> *l
 int main(int argc, const char * argv[]) {
     Scene scene;
     Perspective *cam; // Camera
-    ImagePPM *img;    // Image
+    //ImagePPM *img;    // Image
+    ImageJPG *img;
     Shader *shd;
     bool success;
     clock_t start, end;
@@ -125,7 +127,8 @@ int main(int argc, const char * argv[]) {
     const int W= 512;
     const int H= 512;
     
-    img = new ImagePPM(W,H);
+    //img = new ImagePPM(W,H);
+    img = new ImageJPG(W,H);
     
     // Camera parameters
     const Point Eye ={280,275,-330}, At={280,265,0};
@@ -144,7 +147,7 @@ int main(int argc, const char * argv[]) {
     // shd = new AmbientShader(&scene, background);
 
     // DistributedShader
-    // shd = new DistributedShader(&scene, background);
+    //shd = new DistributedShader(&scene, background);
     
     // PathTracerShader
     shd = new PathTracerShader(&scene, background);
@@ -166,7 +169,8 @@ int main(int argc, const char * argv[]) {
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
     // save the image
-    img->Save("MyImage.ppm");
+    //img->Save("MyImage.ppm");
+    img->Save("MyImage");
     
     fprintf (stdout, "Rendering time = %.3lf secs\n\n", cpu_time_used);
     
