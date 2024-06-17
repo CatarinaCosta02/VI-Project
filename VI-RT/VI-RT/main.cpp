@@ -10,7 +10,8 @@
 #include "perspective.hpp"
 #include "StandardRenderer.hpp"
 //#include "ImagePPM.hpp"
-#include "ImageJPG.hpp"
+//#include "ImageJPG.hpp"
+#include "ImagePFM.hpp"
 #include "AmbientShader.hpp"
 #include "WhittedShader.hpp"
 #include "DistributedShader.hpp"
@@ -60,7 +61,8 @@ int main(int argc, const char * argv[]) {
     Scene scene;
     Perspective *cam; // Camera
     //ImagePPM *img;    // Image
-    ImageJPG *img;
+    //ImageJPG *img;
+    ImagePFM *img;
     Shader *shd;
     bool success;
     clock_t start, end;
@@ -128,7 +130,8 @@ int main(int argc, const char * argv[]) {
     const int H= 512;
     
     //img = new ImagePPM(W,H);
-    img = new ImageJPG(W,H);
+    //img = new ImageJPG(W,H);
+    img = new ImagePFM(W,H);
     
     // Camera parameters
     const Point Eye ={280,275,-330}, At={280,265,0};
@@ -170,7 +173,7 @@ int main(int argc, const char * argv[]) {
 
     // save the image
     //img->Save("MyImage.ppm");
-    img->Save("MyImage");
+    img->Save("MyImage.pfm");
     
     fprintf (stdout, "Rendering time = %.3lf secs\n\n", cpu_time_used);
     

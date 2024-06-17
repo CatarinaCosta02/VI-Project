@@ -1,10 +1,10 @@
-#include "ImageJPG.hpp"
+#include "ImageOpenEXR.hpp"
 #include <iostream>
 #include <fstream>
 #include <opencv2/opencv.hpp>
 
-void ImageJPG::ToneMap() {
-    imageToSave = new JPG_pixel[W * H];
+void ImageOpenEXR::ToneMap() {
+    imageToSave = new OpenEXR_pixel[W * H];
     
     // Loop over each pixel in the image, clamp and convert to byte format
     for (int j = 0; j < H; j++) {
@@ -18,7 +18,7 @@ void ImageJPG::ToneMap() {
     std::cout << "ToneMapping completed!" << std::endl;
 }
 
-bool ImageJPG::Save(std::string filename) {
+bool ImageOpenEXR::Save(std::string filename) {
     
     ToneMap();
 

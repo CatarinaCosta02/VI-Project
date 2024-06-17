@@ -1,16 +1,17 @@
-#ifndef ImageJPG_hpp
-#define ImageJPG_hpp
+#ifndef ImagePFM_hpp
+#define ImagePFM_hpp
 #include "image.hpp"
 
-class ImageJPG: public Image {
+class ImagePFM: public Image {
     typedef struct {
         unsigned char val[3];  // r,g,b
-    } PPM_pixel;
-    PPM_pixel *imageToSave;
+    } PFM_pixel;
+    PFM_pixel *imageToSave;
     void ToneMap ();
 public:
-    ImagePPM(const int W, const int H):Image(W, H) {}
+    ImagePFM(const int W, const int H):Image(W, H) {}
     bool Save (std::string filename);
+    bool CheckImagePlane();
 };
 
-#endif /* ImageJPG_hpp */
+#endif /* ImagePFM_hpp */
