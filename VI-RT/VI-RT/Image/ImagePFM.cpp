@@ -7,9 +7,9 @@
 bool ImagePFM::Save(std::string filename) {
     imageToSave = new PFM_pixel[W*H];
     // Open the file for writing
-    std::ofstream file(filename, std::ios::binary);
+    std::ofstream file(filename + ".pfm", std::ios::binary);
     if (!file) {
-        std::cerr << "Error opening file for writing: " << filename << std::endl;
+        std::cerr << "Error opening file for writing: " << filename << + ".pfm" <<std::endl;
         return false; // Signal failure
     }
 

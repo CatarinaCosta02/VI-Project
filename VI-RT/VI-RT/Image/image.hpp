@@ -6,7 +6,6 @@
 #ifndef IMAGE_HPP
 #define IMAGE_HPP
 
-#pragma once
 #include "RGB.hpp"
 #include <string>
 

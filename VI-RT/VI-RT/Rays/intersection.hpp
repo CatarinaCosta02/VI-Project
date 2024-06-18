@@ -1,7 +1,6 @@
 #ifndef Intersection_hpp
 #define Intersection_hpp
 
-#pragma once
 #include "vector.hpp"
 #include "BRDF.hpp"
 

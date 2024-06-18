@@ -9,9 +9,10 @@
 #include "scene.hpp"
 #include "perspective.hpp"
 #include "StandardRenderer.hpp"
-//#include "ImagePPM.hpp"
-//#include "ImageJPG.hpp"
+#include "ImagePPM.hpp"
+#include "ImageJPG.hpp"
 #include "ImagePFM.hpp"
+#include "ImageOpenEXR.hpp"
 #include "AmbientShader.hpp"
 #include "WhittedShader.hpp"
 #include "DistributedShader.hpp"
@@ -19,7 +20,7 @@
 #include "AmbientLight.hpp"
 #include "PointLight.hpp"
 #include "AreaLight.hpp"
-
+#include <omp.h>
 #include <time.h>
 
 void addSquareLight(Point p, float size, RGB intensity, std::vector <Light *> *lights,int *num) {
@@ -60,15 +61,15 @@ void addSquareLight(Point p, float size, RGB intensity, std::vector <Light *> *l
 int main(int argc, const char * argv[]) {
     Scene scene;
     Perspective *cam; // Camera
-    //ImagePPM *img;    // Image
-    //ImageJPG *img;
-    ImagePFM *img;
+    ImagePPM *imgPPM;    // Image
+    ImageJPG *imgJPG;
+    ImagePFM *imgPFM;
+    ImageOpenEXR *imgOpenEXR;
     Shader *shd;
     bool success;
     clock_t start, end;
     double cpu_time_used;
 
-    // success = scene.Load("../../VI-RT/Scene/tinyobjloader/models/cornell_box_VI.obj"); // LINUX
     success = scene.Load("./VI-RT/Scene/tinyobjloader/models/cornell_box_VI.obj");
     // success = scene.Load("./VI-RT/Scene/tinyobjloader/models/debug.txt");
     
@@ -128,54 +129,86 @@ int main(int argc, const char * argv[]) {
     // Image resolution
     const int W= 512;
     const int H= 512;
-    
-    //img = new ImagePPM(W,H);
-    //img = new ImageJPG(W,H);
-    img = new ImagePFM(W,H);
-    
-    // Camera parameters
-    const Point Eye ={280,275,-330}, At={280,265,0};
-    const Vector Up={0,-1,0};
+
+
+    // Parâmetros da câmera
+    const Point Eye = {280, 275, -330}, At = {280, 265, 0};
+    const Vector Up = {0, -1, 0};
     const float fovW = 90.f;
-    const float fovH = fovW * (float)H/(float)W;  // in degrees
-    const float fovWrad = fovW*3.14f/180.f, fovHrad = fovH*3.14f/180.f;    // to radians
+    const float fovH = fovW * (float)H / (float)W; // em graus
+    const float fovWrad = fovW * 3.14f / 180.f, fovHrad = fovH * 3.14f / 180.f; // para radianos
     cam = new Perspective(Eye, At, Up, W, H, fovWrad, fovHrad);
 
     cam->Information();
     std::cout << std::endl;
 
+    // Cor de fundo
     RGB background(0.2, 0.2, 0.2); // cinza forte
 
-    // AmbienteShader
-    // shd = new AmbientShader(&scene, background);
-
-    // DistributedShader
-    //shd = new DistributedShader(&scene, background);
-    
-    // PathTracerShader
+    // Definir o shader
     shd = new PathTracerShader(&scene, background);
-    
 
-    
-    
-    // declare the renderer
-    // int spp=64;
-    int spp=120;     // samples per pixel
-    StandardRenderer myRender(cam, &scene, img, shd, spp);
+    // Declarar o renderizador
+    int spp = 64; // amostras por pixel
 
-    // sem spp
+    // Chose the image format
+    int n;
+    std::cout << "Chose a format for the image, by default is PPM:\n 1 - JPG\n 2 - PFM\n 3 - OpenEXR\n";
+    std::cin >> n;
 
-    // render
-    start = clock();
-    myRender.Render();
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-
-    // save the image
-    //img->Save("MyImage.ppm");
-    img->Save("MyImage.pfm");
+    switch (n) {
+        case 1:
+        {
+            std::cout << "JPG\n";
+            imgJPG = new ImageJPG(W,H);
+            StandardRenderer myRenderJPG(cam, &scene, imgJPG, shd, spp);
+            start = omp_get_wtime();
+            myRenderJPG.Render();
+            end = omp_get_wtime();
+            cpu_time_used = end - start;
+            imgJPG->Save("MyImage");
+            break;
+        }
+        case 2:
+        {
+            std::cout << "PFM\n";
+            imgPFM = new ImagePFM(W,H);
+            StandardRenderer myRenderPFM(cam, &scene, imgPFM, shd, spp);
+            start = omp_get_wtime();
+            myRenderPFM.Render();
+            end = omp_get_wtime();
+            cpu_time_used = end - start;
+            imgPFM->Save("MyImage");
+            break;
+        }
+        case 3:
+        {
+            std::cout << "OpenEXR\n";
+            imgOpenEXR = new ImageOpenEXR(W,H);
+            StandardRenderer myRenderOpenEXR(cam, &scene, imgOpenEXR, shd, spp);
+            start = omp_get_wtime();
+            myRenderOpenEXR.Render();
+            end = omp_get_wtime();
+            cpu_time_used = end - start;
+            imgOpenEXR->Save("MyImage");
+            imgOpenEXR->Display("MyImage");
+            break;
+        }
+        default:
+        {
+            std::cout << "PPM\n";
+            imgPPM = new ImagePPM(W,H);
+            StandardRenderer myRenderDefault(cam, &scene, imgPPM, shd, spp);
+            start = omp_get_wtime();
+            myRenderDefault.Render();
+            end = omp_get_wtime();
+            cpu_time_used = end - start;
+            imgPPM->Save("MyImage.ppm");
+            break;
+        }
+    }
     
-    fprintf (stdout, "Rendering time = %.3lf secs\n\n", cpu_time_used);
+    fprintf(stdout, "Rendering time = %.3lf secs\n\n", cpu_time_used);
     
     std::cout << "That's all, folks!" << std::endl;
     return 0;

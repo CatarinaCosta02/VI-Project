@@ -8,7 +8,6 @@
 #ifndef light_hpp
 #define light_hpp
 
-#pragma once
 #include "vector.hpp"
 #include "RGB.hpp"
 

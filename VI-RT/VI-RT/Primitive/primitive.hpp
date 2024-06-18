@@ -8,7 +8,6 @@
 #ifndef primitive_hpp
 #define primitive_hpp
 
-#pragma once
 #include "Geometry/geometry.hpp"
 #include "BRDF/BRDF.hpp"
 #include <string> 

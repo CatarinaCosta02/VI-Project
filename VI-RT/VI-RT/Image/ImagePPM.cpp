@@ -35,9 +35,9 @@ bool ImagePPM::Save(std::string filename) {
     ToneMap();
 
     // Open the file for writing
-    std::ofstream file(filename, std::ios::binary);
+    std::ofstream file(filename + ".ppm", std::ios::binary);
     if (!file) {
-        std::cerr << "Error opening file for writing: " << filename << std::endl;
+        std::cerr << "Error opening file for writing: " << filename << + ".ppm" <<std::endl;
         return false; // Signal failure
     }
 
@@ -53,6 +53,7 @@ bool ImagePPM::Save(std::string filename) {
             b = static_cast<unsigned char>(std::min(1.f, imagePlane[i].B) * 255);
             file << r << g << b;
         }
+        
     } catch (const char *err) {
         std::cerr << err << std::endl;
         file.close(); // Close the file in case of an exception
@@ -67,5 +68,4 @@ bool ImagePPM::Save(std::string filename) {
 
     return true; // Signal success
 }
-
 

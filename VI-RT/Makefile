@@ -98,7 +98,7 @@
 
 # LINUX
 CXX      := g++ 
-CXXFLAGS := -std=c++11 -O3 $(OPENCV_INCLUDE)
+CXXFLAGS := -std=c++11 -fopenmp -O3 $(OPENCV_INCLUDE)
 LDFLAGS  := 
 BUILD    := ./build
 OBJ_DIR  := $(BUILD)/objects
