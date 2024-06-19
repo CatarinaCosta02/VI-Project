@@ -127,8 +127,8 @@ int main(int argc, const char * argv[]) {
     std::cout << std::endl;
         
     // Image resolution
-    const int W= 512;
-    const int H= 512;
+    const int W= 1024;
+    const int H= 1024;
 
 
     // Parâmetros da câmera
@@ -149,7 +149,7 @@ int main(int argc, const char * argv[]) {
     shd = new PathTracerShader(&scene, background);
 
     // Declarar o renderizador
-    int spp = 64; // amostras por pixel
+    int spp = 2048; // amostras por pixel
 
     // Chose the image format
     int n;
@@ -159,7 +159,7 @@ int main(int argc, const char * argv[]) {
     switch (n) {
         case 1:
         {
-            std::cout << "JPG\n";
+            std::cout << "The image will be saved in a JPG format!\n";
             imgJPG = new ImageJPG(W,H);
             StandardRenderer myRenderJPG(cam, &scene, imgJPG, shd, spp);
             start = omp_get_wtime();
@@ -171,7 +171,7 @@ int main(int argc, const char * argv[]) {
         }
         case 2:
         {
-            std::cout << "PFM\n";
+            std::cout << "The image will be saved in a PFM format!\n";
             imgPFM = new ImagePFM(W,H);
             StandardRenderer myRenderPFM(cam, &scene, imgPFM, shd, spp);
             start = omp_get_wtime();
@@ -183,7 +183,7 @@ int main(int argc, const char * argv[]) {
         }
         case 3:
         {
-            std::cout << "OpenEXR\n";
+            std::cout << "The image will be saved in a OpenEXR format!\n";
             imgOpenEXR = new ImageOpenEXR(W,H);
             StandardRenderer myRenderOpenEXR(cam, &scene, imgOpenEXR, shd, spp);
             start = omp_get_wtime();
@@ -196,13 +196,13 @@ int main(int argc, const char * argv[]) {
         }
         default:
         {
-            std::cout << "PPM\n";
+            std::cout << "The image will be saved in a PPM format!\n";
             imgPPM = new ImagePPM(W,H);
             StandardRenderer myRenderDefault(cam, &scene, imgPPM, shd, spp);
-            start = omp_get_wtime();
+            start = clock();
             myRenderDefault.Render();
-            end = omp_get_wtime();
-            cpu_time_used = end - start;
+            end = clock();
+            cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
             imgPPM->Save("MyImage.ppm");
             break;
         }

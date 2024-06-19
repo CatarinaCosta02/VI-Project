@@ -1,0 +1,5 @@
+Test 1: chunk Size=5, Time=56.2557s
+Test 2: chunk Size=104, Time=55.5661s
+Test 3: chunk Size=203, Time=55.5714s
+Test 4: chunk Size=302, Time=56.4473s
+Test 5: chunk Size=401, Time=55.6819s
